@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resultados y Clasificación de la Liga</title>
-  <!-- Librería PapaParse para leer datos CSV fácilmente -->
+
+  <title>Liga Cervantes - Clasificación y Resultados</title>
+
+  <!-- PapaParse para leer el CSV de Google Sheets -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-<style>
-    /* Estilos Generales */
+
+  <style>
     :root {
       --primary-color: #1a365d;
       --secondary-color: #2b6cb0;
@@ -16,6 +18,9 @@
       --card-bg: #ffffff;
       --text-color: #2d3748;
       --border-color: #e2e8f0;
+      --win-color: #c6f6d5;
+      --draw-color: #fefcbf;
+      --loss-color: #fed7d7;
     }
 
     * {
@@ -25,7 +30,7 @@
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
       line-height: 1.6;
@@ -35,15 +40,19 @@
     header {
       text-align: center;
       margin-bottom: 30px;
-      padding: 20px 0;
+      padding: 25px 15px;
       background: var(--primary-color);
       color: white;
       border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      font-size: clamp(1.5rem, 4vw, 2rem);
     }
 
     main {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
@@ -54,7 +63,7 @@
       background: var(--card-bg);
       padding: 24px;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
     h2 {
@@ -64,19 +73,42 @@
       padding-bottom: 8px;
     }
 
-    /* Estilos de la Tabla de Clasificación */
+    /* Mensaje de carga */
+    #loading {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #718096;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+    }
+
+    #error {
+      display: none;
+      text-align: center;
+      color: #c53030;
+      background: #fff5f5;
+      border: 1px solid #feb2b2;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    /* Tabla de clasificación */
     .table-container {
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       text-align: center;
+      min-width: 700px;
     }
 
-    th, td {
-      padding: 12px;
+    th,
+    td {
+      padding: 12px 10px;
       border-bottom: 1px solid var(--border-color);
     }
 
@@ -84,18 +116,37 @@
       background-color: var(--secondary-color);
       color: white;
       font-weight: 600;
+      white-space: nowrap;
     }
 
-    tr:hover {
+    tbody tr:hover {
       background-color: #f1f5f9;
     }
 
     td.team-name {
       text-align: left;
       font-weight: bold;
+      white-space: nowrap;
     }
 
-    /* Estilos de los Resultados y Jornadas */
+    td.position {
+      font-weight: bold;
+    }
+
+    /* Colores de las primeras posiciones */
+    tbody tr:nth-child(1) td.position {
+      color: #b7791f;
+    }
+
+    tbody tr:nth-child(2) td.position {
+      color: #718096;
+    }
+
+    tbody tr:nth-child(3) td.position {
+      color: #9c4221;
+    }
+
+    /* Jornadas */
     .jornadas-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -121,40 +172,83 @@
     }
 
     .jornada-card li {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
       align-items: center;
       padding: 8px 0;
       border-bottom: 1px dashed var(--border-color);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
     .jornada-card li:last-child {
       border-bottom: none;
     }
 
+    .team-home {
+      text-align: right;
+    }
+
+    .team-away {
+      text-align: left;
+    }
+
     .score {
       font-weight: bold;
       background: #edf2f7;
-      padding: 2px 8px;
+      padding: 3px 8px;
       border-radius: 4px;
+      white-space: nowrap;
     }
 
-    /* Mensaje de carga */
-    #loading {
-      text-align: center;
-      font-size: 1.2rem;
+    .pendiente {
       color: #718096;
     }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      section {
+        padding: 15px;
+      }
+
+      header {
+        margin-bottom: 20px;
+      }
+
+      .jornadas-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .jornada-card li {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<header>
+
+  <header>
     <h1>🏆 Liga Cervantes - Clasificación y Resultados</h1>
   </header>
-<main>
-    <div id="loading">Cargando datos del torneo...</div>
+
+  <main>
+
+    <div id="loading">
+      Cargando datos del torneo...
+    </div>
+
+    <div id="error">
+      Error al cargar los datos. Revisa el enlace del Google Sheet.
+    </div>
+
     <section id="seccion-clasificacion" style="display: none;">
       <h2>Tabla de Clasificación</h2>
+
       <div class="table-container">
         <table>
           <thead>
@@ -171,8 +265,9 @@
               <th>Pts</th>
             </tr>
           </thead>
+
           <tbody id="body-clasificacion">
-            <!-- Se completa dinámicamente con JS -->
+            <!-- Se completa dinámicamente -->
           </tbody>
         </table>
       </div>
@@ -180,169 +275,481 @@
 
     <section id="seccion-jornadas" style="display: none;">
       <h2>Jornadas y Resultados</h2>
+
       <div id="contenedor-jornadas" class="jornadas-grid">
-        <!-- Se completa dinámicamente con JS -->
+        <!-- Se completa dinámicamente -->
       </div>
     </section>
-</main>
-<script>
-    // ⚠️ REEMPLAZA ESTA URL CON LA URL CSV QUE COPIASTE DE TU GOOGLE SHEET PUBLICADO
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTnB4t1kN7IDlmugRW2R7HNMNU-XCfdHlU3OWZifnjtto7A4l5zctDevB8mweRuGf2_F4iXwucexThV/pub?output=csv';
+
+  </main>
+
+  <script>
+    // ============================================================
+    // CONFIGURACIÓN
+    // ============================================================
+
+    const SHEET_CSV_URL =
+      'https://docs.google.com/spreadsheets/d/e/2PACX-1vTnB4t1kN7IDlmugRW2R7HNMNU-XCfdHlU3OWZifnjtto7A4l5zctDevB8mweRuGf2_F4iXwucexThV/pub?output=csv';
+
+
+    // ============================================================
+    // INICIO
+    // ============================================================
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Cargar datos del CSV mediante PapaParse
+
       Papa.parse(SHEET_CSV_URL, {
+
         download: true,
+
         header: true,
+
+        skipEmptyLines: true,
+
         complete: function(results) {
+
           document.getElementById('loading').style.display = 'none';
-          document.getElementById('seccion-clasificacion').style.display = 'block';
-          document.getElementById('seccion-jornadas').style.display = 'block';
-          
-          procesarDatos(results.data);
+
+          if (!results.data || results.data.length === 0) {
+            mostrarError('No se han encontrado datos en el Google Sheet.');
+            return;
+          }
+
+          try {
+            procesarDatos(results.data);
+
+            document.getElementById('seccion-clasificacion').style.display = 'block';
+            document.getElementById('seccion-jornadas').style.display = 'block';
+
+          } catch (error) {
+
+            console.error('Error procesando los datos:', error);
+
+            mostrarError(
+              'Los datos se han cargado, pero no se han podido procesar correctamente.'
+            );
+          }
         },
-        error: function(err) {
-          document.getElementById('loading').textContent = 'Error al cargar los datos. Revisa el enlace del Google Sheet.';
-          console.error(err);
+
+        error: function(error) {
+
+          console.error('Error cargando CSV:', error);
+
+          document.getElementById('loading').style.display = 'none';
+
+          mostrarError(
+            'No se han podido cargar los datos. Revisa que el Google Sheet esté publicado en Internet.'
+          );
         }
       });
     });
 
+
+    // ============================================================
+    // MOSTRAR ERROR
+    // ============================================================
+
+    function mostrarError(mensaje) {
+
+      const error = document.getElementById('error');
+
+      error.textContent = mensaje;
+      error.style.display = 'block';
+    }
+
+
+    // ============================================================
+    // PROCESAR DATOS
+    // ============================================================
+
     function procesarDatos(partidos) {
+
       const equipos = {};
 
-      partidos.forEach(p => {
-        // Obtener nombres de los equipos
-        const local = p['Equipo Local'] ? p['Equipo Local'].trim() : '';
-        const visitante = p['Equipo Visitante'] ? p['Equipo Visitante'].trim() : '';
-        
-        if (!local || !visitante) return;
+      partidos.forEach(partido => {
 
-        // Registrar equipo en el diccionario si aún no existe
-        [local, visitante].forEach(eq => {
-          if (!equipos[eq]) {
-            equipos[eq] = { nombre: eq, pj: 0, pg: 0, pe: 0, pp: 0, gf: 0, gc: 0, pts: 0 };
+        const local = obtenerTexto(partido['Equipo Local']);
+        const visitante = obtenerTexto(partido['Equipo Visitante']);
+
+        // Ignorar filas sin equipos
+        if (!local || !visitante) {
+          return;
+        }
+
+        // Crear equipos si todavía no existen
+        [local, visitante].forEach(nombre => {
+
+          if (!equipos[nombre]) {
+
+            equipos[nombre] = {
+              nombre: nombre,
+              pj: 0,
+              pg: 0,
+              pe: 0,
+              pp: 0,
+              gf: 0,
+              gc: 0,
+              pts: 0
+            };
           }
         });
 
-        const golesLocal = parseInt(p['Goles Local']);
-        const golesVisitante = parseInt(p['Goles Visitante']);
+        const golesLocal = convertirGoles(partido['Goles Local']);
+        const golesVisitante = convertirGoles(partido['Goles Visitante']);
 
-        // Comprobar si el partido ya se ha jugado (si hay números válidos de goles)
-        if (!isNaN(golesLocal) && !isNaN(golesVisitante)) {
+        // Solo contabilizar partidos que tengan resultado
+        if (golesLocal !== null && golesVisitante !== null) {
+
           equipos[local].pj++;
           equipos[visitante].pj++;
+
           equipos[local].gf += golesLocal;
           equipos[local].gc += golesVisitante;
+
           equipos[visitante].gf += golesVisitante;
           equipos[visitante].gc += golesLocal;
 
+          // Victoria local
           if (golesLocal > golesVisitante) {
+
             equipos[local].pg++;
             equipos[local].pts += 3;
+
             equipos[visitante].pp++;
+
+          // Victoria visitante
           } else if (golesLocal < golesVisitante) {
+
             equipos[visitante].pg++;
             equipos[visitante].pts += 3;
+
             equipos[local].pp++;
+
+          // Empate
           } else {
+
             equipos[local].pe++;
-            equipos[local].pts += 1;
             equipos[visitante].pe++;
-            equipos[visitante].pts += 1;
+
+            equipos[local].pts++;
+            equipos[visitante].pts++;
           }
         }
       });
 
-      // Ordenar tabla de clasificación: primero por Puntos, luego por Diferencia de Goles
-      const clasificacion = Object.values(equipos).sort((a, b) => {
-        if (b.pts !== a.pts) return b.pts - a.pts;
-        const dgA = a.gf - a.gc;
-        const dgB = b.gf - b.gc;
-        return dgB - dgA;
+
+      // Convertir objeto en array
+      const clasificacion = Object.values(equipos);
+
+
+      // Orden de clasificación:
+      // 1. Puntos
+      // 2. Diferencia de goles
+      // 3. Goles a favor
+      // 4. Nombre del equipo
+
+      clasificacion.sort((a, b) => {
+
+        const diferenciaA = a.gf - a.gc;
+        const diferenciaB = b.gf - b.gc;
+
+        if (b.pts !== a.pts) {
+          return b.pts - a.pts;
+        }
+
+        if (diferenciaB !== diferenciaA) {
+          return diferenciaB - diferenciaA;
+        }
+
+        if (b.gf !== a.gf) {
+          return b.gf - a.gf;
+        }
+
+        return a.nombre.localeCompare(b.nombre, 'es');
       });
 
+
       renderizarClasificacion(clasificacion);
+
       renderizarJornadas(partidos);
     }
 
+
+    // ============================================================
+    // CONVERTIR TEXTO
+    // ============================================================
+
+    function obtenerTexto(valor) {
+
+      if (valor === null || valor === undefined) {
+        return '';
+      }
+
+      return String(valor).trim();
+    }
+
+
+    // ============================================================
+    // CONVERTIR GOLES
+    // ============================================================
+
+    function convertirGoles(valor) {
+
+      if (valor === null || valor === undefined) {
+        return null;
+      }
+
+      const texto = String(valor).trim();
+
+      if (texto === '') {
+        return null;
+      }
+
+      const numero = Number(texto);
+
+      if (!Number.isFinite(numero) || numero < 0) {
+        return null;
+      }
+
+      return numero;
+    }
+
+
+    // ============================================================
+    // RENDERIZAR CLASIFICACIÓN
+    // ============================================================
+
     function renderizarClasificacion(tabla) {
-      const tbody = document.getElementById('body-clasificacion');
+
+      const tbody =
+        document.getElementById('body-clasificacion');
+
       tbody.innerHTML = '';
 
-      tabla.forEach((eq, index) => {
-        const dg = eq.gf - eq.gc;
+
+      tabla.forEach((equipo, index) => {
+
+        const dg = equipo.gf - equipo.gc;
+
         const tr = document.createElement('tr');
+
+
         tr.innerHTML = `
-          <td>${index + 1}</td>
-          <td class="team-name">${eq.nombre}</td>
-          <td>${eq.pj}</td>
-          <td>${eq.pg}</td>
-          <td>${eq.pe}</td>
-          <td>${eq.pp}</td>
-          <td>${eq.gf}</td>
-          <td>${eq.gc}</td>
-          <td>${dg > 0 ? '+' + dg : dg}</td>
-          <td><strong>${eq.pts}</strong></td>
+
+          <td class="position">
+            ${index + 1}
+          </td>
+
+          <td class="team-name">
+            ${escaparHTML(equipo.nombre)}
+          </td>
+
+          <td>${equipo.pj}</td>
+
+          <td>${equipo.pg}</td>
+
+          <td>${equipo.pe}</td>
+
+          <td>${equipo.pp}</td>
+
+          <td>${equipo.gf}</td>
+
+          <td>${equipo.gc}</td>
+
+          <td>
+            ${dg > 0 ? '+' + dg : dg}
+          </td>
+
+          <td>
+            <strong>${equipo.pts}</strong>
+          </td>
         `;
+
+
         tbody.appendChild(tr);
       });
     }
 
+
+    // ============================================================
+    // RENDERIZAR JORNADAS
+    // ============================================================
+
     function renderizarJornadas(partidos) {
-      const contenedor = document.getElementById('contenedor-jornadas');
+
+      const contenedor =
+        document.getElementById('contenedor-jornadas');
+
       contenedor.innerHTML = '';
+
 
       const jornadas = {};
 
-      // Agrupar los partidos por jornada
-      partidos.forEach(p => {
-        const j = p['Jornada'];
-        if (!j) return;
-        if (!jornadas[j]) jornadas[j] = [];
-        jornadas[j].push(p);
+
+      // Agrupar partidos por jornada
+      partidos.forEach(partido => {
+
+        const jornada = obtenerTexto(partido['Jornada']);
+
+        const local = obtenerTexto(partido['Equipo Local']);
+        const visitante = obtenerTexto(partido['Equipo Visitante']);
+
+        if (!jornada || !local || !visitante) {
+          return;
+        }
+
+        if (!jornadas[jornada]) {
+          jornadas[jornada] = [];
+        }
+
+        jornadas[jornada].push(partido);
       });
 
-      Object.keys(jornadas).forEach(jornadaKey => {
-        const divJornada = document.createElement('div');
-        divJornada.className = 'jornada-card';
-        divJornada.innerHTML = `<h3>${jornadaKey}</h3>`;
 
-        const ul = document.createElement('ul');
-        jornadas[jornadaKey].forEach(p => {
-          const gLocal = p['Goles Local'] !== '' && p['Goles Local'] !== undefined ? p['Goles Local'] : '-';
-          const gVis = p['Goles Visitante'] !== '' && p['Goles Visitante'] !== undefined ? p['Goles Visitante'] : '-';
-          
-          const li = document.createElement('li');
+      // Ordenar jornadas
+      const jornadasOrdenadas =
+        Object.keys(jornadas).sort(ordenarJornadas);
+
+
+      jornadasOrdenadas.forEach(jornadaKey => {
+
+        const divJornada =
+          document.createElement('div');
+
+        divJornada.className = 'jornada-card';
+
+
+        const titulo =
+          document.createElement('h3');
+
+        titulo.textContent = jornadaKey;
+
+
+        const ul =
+          document.createElement('ul');
+
+
+        jornadas[jornadaKey].forEach(partido => {
+
+          const local =
+            obtenerTexto(partido['Equipo Local']);
+
+          const visitante =
+            obtenerTexto(partido['Equipo Visitante']);
+
+
+          const golesLocal =
+            convertirGoles(partido['Goles Local']);
+
+          const golesVisitante =
+            convertirGoles(partido['Goles Visitante']);
+
+
+          const jugado =
+            golesLocal !== null &&
+            golesVisitante !== null;
+
+
+          const marcador =
+            jugado
+              ? `${golesLocal} - ${golesVisitante}`
+              : 'Pendiente';
+
+
+          const li =
+            document.createElement('li');
+
+
           li.innerHTML = `
-            <span>${p['Equipo Local']}</span>
-            <span class="score">${gLocal} - ${gVis}</span>
-            <span>${p['Equipo Visitante']}</span>
+
+            <span class="team-home">
+              ${escaparHTML(local)}
+            </span>
+
+            <span class="score ${jugado ? '' : 'pendiente'}">
+              ${marcador}
+            </span>
+
+            <span class="team-away">
+              ${escaparHTML(visitante)}
+            </span>
+
           `;
+
+
           ul.appendChild(li);
         });
 
+
+        divJornada.appendChild(titulo);
+
         divJornada.appendChild(ul);
+
         contenedor.appendChild(divJornada);
       });
     }
+
+
+    // ============================================================
+    // ORDENAR JORNADAS
+    // ============================================================
+
+    function ordenarJornadas(a, b) {
+
+      const numeroA = extraerNumero(a);
+      const numeroB = extraerNumero(b);
+
+
+      if (numeroA !== null && numeroB !== null) {
+        return numeroA - numeroB;
+      }
+
+
+      if (numeroA !== null) {
+        return -1;
+      }
+
+
+      if (numeroB !== null) {
+        return 1;
+      }
+
+
+      return a.localeCompare(b, 'es');
+    }
+
+
+    // ============================================================
+    // EXTRAER NÚMERO DE JORNADA
+    // ============================================================
+
+    function extraerNumero(texto) {
+
+      const coincidencia =
+        String(texto).match(/\d+/);
+
+      return coincidencia
+        ? parseInt(coincidencia[0], 10)
+        : null;
+    }
+
+
+    // ============================================================
+    // SEGURIDAD HTML
+    // Evita que un nombre del Google Sheet pueda insertar HTML.
+    // ============================================================
+
+    function escaparHTML(texto) {
+
+      return String(texto)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+  </script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
