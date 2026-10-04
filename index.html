@@ -233,7 +233,7 @@
 <body>
 
   <header>
-    <h1>🏆 Liga Cervantes - 4º Domingos Mañana 2026-27</h1>
+    <h1>🏆 Liga Cervantes - 2026-27</h1>
   </header>
 
   <main>
@@ -255,6 +255,7 @@
             <tr>
               <th>Pos</th>
               <th style="text-align: left;">Equipo</th>
+              <th>Pts</th>
               <th>PJ</th>
               <th>PG</th>
               <th>PE</th>
@@ -262,7 +263,6 @@
               <th>GF</th>
               <th>GC</th>
               <th>DG</th>
-              <th>Pts</th>
             </tr>
           </thead>
 
@@ -543,7 +543,11 @@
           <td class="team-name">
             ${escaparHTML(equipo.nombre)}
           </td>
-
+          
+          <td>
+            <strong>${equipo.pts}</strong>
+          </td>
+          
           <td>${equipo.pj}</td>
 
           <td>${equipo.pg}</td>
@@ -558,11 +562,8 @@
 
           <td>
             ${dg > 0 ? '+' + dg : dg}
-          </td>
-
-          <td>
-            <strong>${equipo.pts}</strong>
-          </td>
+          </td>       
+          
         `;
 
 
