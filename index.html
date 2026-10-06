@@ -1266,7 +1266,9 @@
     // PRÓXIMA JORNADA
     // ============================================================
 
-    function renderizarProximaJornada(partidos) {
+
+
+function renderizarProximaJornada(partidos) {
 
   const contenedor =
     document.getElementById(
@@ -1281,10 +1283,237 @@
   const jornadasOrdenadas =
     Object.keys(jornadas)
       .sort(ordenarJornadas);
-function crearListaPartidos(
-  partidos,
-  mostrarHorario
-) {
+
+
+  // ==========================================================
+  // BUSCAR ÚLTIMA JORNADA COMPLETAMENTE JUGADA
+  // ==========================================================
+
+  let ultimaJornada = null;
+
+  jornadasOrdenadas.forEach(jornada => {
+
+    const partidosJornada =
+      jornadas[jornada];
+
+    const todosJugados =
+      partidosJornada.length > 0 &&
+      partidosJornada.every(partido => {
+
+        const gl =
+          convertirGoles(
+            partido['Goles Local']
+          );
+
+        const gv =
+          convertirGoles(
+            partido['Goles Visitante']
+          );
+
+        return (
+          gl !== null &&
+          gv !== null
+        );
+
+      });
+
+    if (todosJugados) {
+
+      ultimaJornada = jornada;
+
+    }
+
+  });
+
+
+  // ==========================================================
+  // BUSCAR SIGUIENTE JORNADA
+  // ==========================================================
+
+  let siguienteJornada = null;
+
+  for (
+    const jornada of jornadasOrdenadas
+  ) {
+
+    const partidosJornada =
+      jornadas[jornada];
+
+    const hayPartidosSinJugar =
+      partidosJornada.some(partido => {
+
+        const gl =
+          convertirGoles(
+            partido['Goles Local']
+          );
+
+        const gv =
+          convertirGoles(
+            partido['Goles Visitante']
+          );
+
+        return (
+          gl === null ||
+          gv === null
+        );
+
+      });
+
+    if (hayPartidosSinJugar) {
+
+      siguienteJornada = jornada;
+
+      break;
+
+    }
+
+  }
+
+
+  // ==========================================================
+  // MOSTRAR ÚLTIMA JORNADA JUGADA
+  // ==========================================================
+
+  if (ultimaJornada) {
+
+    const bloqueUltima =
+      document.createElement('div');
+
+    bloqueUltima.innerHTML = `
+
+      <div class="next-round-header">
+
+        <div class="next-round-title">
+          ✅ Última jornada jugada
+        </div>
+
+        <div class="next-round-description">
+          ${escaparHTML(ultimaJornada)}
+        </div>
+
+      </div>
+
+    `;
+
+    contenedor.appendChild(
+      bloqueUltima
+    );
+
+
+    const partidosUltima =
+      crearListaPartidos(
+        jornadas[ultimaJornada]
+      );
+
+    contenedor.appendChild(
+      partidosUltima
+    );
+
+  }
+
+
+  // ==========================================================
+  // SEPARADOR ENTRE JORNADAS
+  // ==========================================================
+
+  if (
+    ultimaJornada &&
+    siguienteJornada
+  ) {
+
+    const separador =
+      document.createElement('div');
+
+    separador.style.height = '30px';
+
+    contenedor.appendChild(
+      separador
+    );
+
+  }
+
+
+  // ==========================================================
+  // MOSTRAR SIGUIENTE JORNADA
+  // ==========================================================
+
+  if (siguienteJornada) {
+
+    const bloqueSiguiente =
+      document.createElement('div');
+
+    bloqueSiguiente.innerHTML = `
+
+      <div class="next-round-header">
+
+        <div class="next-round-title">
+          📅 Siguiente jornada
+        </div>
+
+        <div class="next-round-description">
+          ${escaparHTML(siguienteJornada)}
+        </div>
+
+      </div>
+
+    `;
+
+    contenedor.appendChild(
+      bloqueSiguiente
+    );
+
+
+    const partidosSiguiente =
+      crearListaPartidos(
+        jornadas[siguienteJornada]
+      );
+
+    contenedor.appendChild(
+      partidosSiguiente
+    );
+
+  }
+
+
+  // ==========================================================
+  // SI TODO EL TORNEO ESTÁ TERMINADO
+  // ==========================================================
+
+  if (
+    !ultimaJornada &&
+    !siguienteJornada
+  ) {
+
+    contenedor.innerHTML = `
+
+      <div class="all-finished">
+
+        <div class="icon">
+          🏆
+        </div>
+
+        <h2>
+          ¡Todas las jornadas completadas!
+        </h2>
+
+        <p>
+          No hay partidos pendientes en el torneo.
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+// ============================================================
+// CREAR LISTA DE PARTIDOS
+// ============================================================
+
+function crearListaPartidos(partidos) {
 
   const container =
     document.createElement('div');
@@ -1342,8 +1571,9 @@ function crearListaPartidos(
 
     }
 
+
     // ========================================================
-    // PARTIDO SIN RESULTADO
+    // PARTIDO SIN RESULTADO PERO CON HORARIO
     // ========================================================
 
     else if (horario) {
@@ -1353,8 +1583,9 @@ function crearListaPartidos(
 
     }
 
+
     // ========================================================
-    // SIN HORARIO
+    // PARTIDO SIN RESULTADO Y SIN HORARIO
     // ========================================================
 
     else {
@@ -1406,6 +1637,11 @@ function crearListaPartidos(
 
 }
 
+
+// ============================================================
+// FORMATEAR HORARIO
+// ============================================================
+
 function formatearHorario(valor) {
 
   const texto =
@@ -1413,11 +1649,12 @@ function formatearHorario(valor) {
 
 
   /*
-   * Si Google Sheets devuelve algo como:
+   * Si Google Sheets devuelve:
+   *
    * 18:00
    * 18:00:00
    *
-   * nos quedamos con HH:MM.
+   * mostramos únicamente HH:MM.
    */
 
   const coincidencia =
@@ -1435,243 +1672,20 @@ function formatearHorario(valor) {
     const minutos =
       coincidencia[2];
 
+
     return `${horas}:${minutos}`;
 
   }
 
 
-  // Si el valor no tiene formato de hora,
-  // mostramos el contenido original.
-
   return texto;
 
 }
-      
 
-      
-  // ==========================================================
-  // BUSCAR ÚLTIMA JORNADA COMPLETAMENTE JUGADA
-  // ==========================================================
 
-  let ultimaJornada = null;
 
-  jornadasOrdenadas.forEach(jornada => {
 
-    const partidosJornada =
-      jornadas[jornada];
-
-    const todosJugados =
-      partidosJornada.length > 0 &&
-      partidosJornada.every(partido => {
-
-        const gl =
-          convertirGoles(
-            partido['Goles Local']
-          );
-
-        const gv =
-          convertirGoles(
-            partido['Goles Visitante']
-          );
-
-        return (
-          gl !== null &&
-          gv !== null
-        );
-
-      });
-
-    if (todosJugados) {
-      ultimaJornada = jornada;
-    }
-
-  });
-
-
-  // ==========================================================
-  // BUSCAR SIGUIENTE JORNADA
-  // ==========================================================
-
-  let siguienteJornada = null;
-
-  for (
-    const jornada of jornadasOrdenadas
-  ) {
-
-    const partidosJornada =
-      jornadas[jornada];
-
-    const hayPartidosSinJugar =
-      partidosJornada.some(partido => {
-
-        const gl =
-          convertirGoles(
-            partido['Goles Local']
-          );
-
-        const gv =
-          convertirGoles(
-            partido['Goles Visitante']
-          );
-
-        return (
-          gl === null ||
-          gv === null
-        );
-
-      });
-
-    if (hayPartidosSinJugar) {
-
-      siguienteJornada = jornada;
-
-      break;
-
-    }
-
-  }
-
-
-  // ==========================================================
-  // CREAR BLOQUE DE ÚLTIMA JORNADA
-  // ==========================================================
-
-  if (ultimaJornada) {
-
-    const bloqueUltima =
-      document.createElement('div');
-
-    bloqueUltima.innerHTML = `
-
-      <div class="next-round-header">
-
-        <div class="next-round-title">
-          ✅ Última jornada jugada
-        </div>
-
-        <div class="next-round-description">
-          ${escaparHTML(ultimaJornada)}
-        </div>
-
-      </div>
-
-    `;
-
-    contenedor.appendChild(
-      bloqueUltima
-    );
-
-
-    const partidosUltima =
-      crearListaPartidos(
-        jornadas[ultimaJornada],
-        false
-      );
-
-    contenedor.appendChild(
-      partidosUltima
-    );
-
-  }
-
-
-  // ==========================================================
-  // SEPARADOR
-  // ==========================================================
-
-  if (
-    ultimaJornada &&
-    siguienteJornada
-  ) {
-
-    const separador =
-      document.createElement('div');
-
-    separador.style.height = '30px';
-
-    contenedor.appendChild(
-      separador
-    );
-
-  }
-
-
-  // ==========================================================
-  // CREAR BLOQUE DE SIGUIENTE JORNADA
-  // ==========================================================
-
-  if (siguienteJornada) {
-
-    const bloqueSiguiente =
-      document.createElement('div');
-
-    bloqueSiguiente.innerHTML = `
-
-      <div class="next-round-header">
-
-        <div class="next-round-title">
-          📅 Siguiente jornada
-        </div>
-
-        <div class="next-round-description">
-          ${escaparHTML(siguienteJornada)}
-        </div>
-
-      </div>
-
-    `;
-
-    contenedor.appendChild(
-      bloqueSiguiente
-    );
-
-
-    const partidosSiguiente =
-      crearListaPartidos(
-        jornadas[siguienteJornada],
-        true
-      );
-
-    contenedor.appendChild(
-      partidosSiguiente
-    );
-
-  }
-
-
-  // ==========================================================
-  // SI TODO EL TORNEO ESTÁ TERMINADO
-  // ==========================================================
-
-  if (
-    !ultimaJornada &&
-    !siguienteJornada
-  ) {
-
-    contenedor.innerHTML = `
-
-      <div class="all-finished">
-
-        <div class="icon">
-          🏆
-        </div>
-
-        <h2>
-          ¡Todas las jornadas completadas!
-        </h2>
-
-        <p>
-          No hay partidos pendientes en el torneo.
-        </p>
-
-      </div>
-
-    `;
-
-  }
-
-}
-
+    
     // ============================================================
     // ORDENAR JORNADAS
     // ============================================================
