@@ -1266,264 +1266,411 @@
     // PRÓXIMA JORNADA
     // ============================================================
 
-    function renderizarProximaJornada(
-      partidos
-    ) {
+    function renderizarProximaJornada(partidos) {
 
-      const contenedor =
-        document.getElementById(
-          'proxima-jornada-contenido'
-        );
+  const contenedor =
+    document.getElementById(
+      'proxima-jornada-contenido'
+    );
 
+  contenedor.innerHTML = '';
 
-      contenedor.innerHTML = '';
+  const jornadas =
+    agruparJornadas(partidos);
 
+  const jornadasOrdenadas =
+    Object.keys(jornadas)
+      .sort(ordenarJornadas);
+function crearListaPartidos(
+  partidos,
+  mostrarHorario
+) {
 
-      const jornadas =
-        agruparJornadas(partidos);
+  const container =
+    document.createElement('div');
 
-
-      const jornadasOrdenadas =
-        Object.keys(jornadas)
-          .sort(ordenarJornadas);
-
-
-      /*
-       * Buscamos la primera jornada que todavía
-       * tenga al menos un partido pendiente.
-       */
-
-      let proximaJornada = null;
+  container.className =
+    'next-matches';
 
 
-      for (
-        const jornada of jornadasOrdenadas
-      ) {
+  partidos.forEach(partido => {
 
-        const partidosJornada =
-          jornadas[jornada];
+    const local =
+      obtenerTexto(
+        partido['Equipo Local']
+      );
 
-
-        const tienePendientes =
-          partidosJornada.some(
-            partido => {
-
-              const gl =
-                convertirGoles(
-                  partido['Goles Local']
-                );
-
-              const gv =
-                convertirGoles(
-                  partido['Goles Visitante']
-                );
-
-
-              return (
-                gl === null ||
-                gv === null
-              );
-
-            }
-          );
-
-
-        if (tienePendientes) {
-
-          proximaJornada =
-            jornada;
-
-          break;
-
-        }
-
-      }
-
-
-      // Si no quedan jornadas pendientes
-      if (!proximaJornada) {
-
-        contenedor.innerHTML = `
-
-          <div class="all-finished">
-
-            <div class="icon">
-              🏆
-            </div>
-
-            <h2>
-              ¡Todas las jornadas completadas!
-            </h2>
-
-            <p>
-              No hay partidos pendientes en el torneo.
-            </p>
-
-          </div>
-
-        `;
-
-        return;
-
-      }
-
-
-      const partidosProxima =
-        jornadas[proximaJornada];
-
-
-      // Cabecera
-      const header =
-        document.createElement('div');
-
-
-      header.className =
-        'next-round-header';
-
-
-      header.innerHTML = `
-
-        <div class="next-round-title">
-          📅 ${escaparHTML(proximaJornada)}
-        </div>
-
-        <div class="next-round-description">
-          Próxima jornada
-        </div>
-
-      `;
-
-
-      contenedor.appendChild(
-        header
+    const visitante =
+      obtenerTexto(
+        partido['Equipo Visitante']
       );
 
 
-      // Partidos
-      const partidosContainer =
-        document.createElement('div');
+    const golesLocal =
+      convertirGoles(
+        partido['Goles Local']
+      );
 
-
-      partidosContainer.className =
-        'next-matches';
-
-
-      let pendientes = 0;
-
-
-      partidosProxima.forEach(
-        partido => {
-
-          const local =
-            obtenerTexto(
-              partido['Equipo Local']
-            );
-
-          const visitante =
-            obtenerTexto(
-              partido['Equipo Visitante']
-            );
-
-
-          const golesLocal =
-            convertirGoles(
-              partido['Goles Local']
-            );
-
-          const golesVisitante =
-            convertirGoles(
-              partido['Goles Visitante']
-            );
-
-
-          const jugado =
-            golesLocal !== null &&
-            golesVisitante !== null;
-
-
-          if (!jugado) {
-            pendientes++;
-          }
-
-
-          const marcador =
-            jugado
-              ? `${golesLocal} - ${golesVisitante}`
-              : 'Pendiente';
-
-
-          const partidoDiv =
-            document.createElement('div');
-
-
-          partidoDiv.className =
-            'next-match';
-
-
-          partidoDiv.innerHTML = `
-
-            <span class="next-team-home">
-              ${escaparHTML(local)}
-            </span>
-
-            <span class="next-score ${
-              jugado
-                ? ''
-                : 'pending'
-            }">
-              ${marcador}
-            </span>
-
-            <span class="next-team-away">
-              ${escaparHTML(visitante)}
-            </span>
-
-          `;
-
-
-          partidosContainer.appendChild(
-            partidoDiv
-          );
-
-        }
+    const golesVisitante =
+      convertirGoles(
+        partido['Goles Visitante']
       );
 
 
-      contenedor.appendChild(
-        partidosContainer
+    const horario =
+      obtenerTexto(
+        partido['Horario']
       );
 
 
-      if (pendientes > 0) {
-
-        const aviso =
-          document.createElement('div');
-
-
-        aviso.className =
-          'pending-label';
+    const jugado =
+      golesLocal !== null &&
+      golesVisitante !== null;
 
 
-        aviso.textContent =
-          `⏳ ${pendientes} partido${
-            pendientes === 1
-              ? ''
-              : 's'
-          } pendiente${
-            pendientes === 1
-              ? ''
-              : 's'
-          }`;
+    let marcador;
 
 
-        contenedor.appendChild(
-          aviso
-        );
+    // ========================================================
+    // PARTIDO YA JUGADO
+    // ========================================================
 
-      }
+    if (jugado) {
+
+      marcador =
+        `${golesLocal} - ${golesVisitante}`;
 
     }
 
+    // ========================================================
+    // PARTIDO SIN RESULTADO
+    // ========================================================
+
+    else if (horario) {
+
+      marcador =
+        formatearHorario(horario);
+
+    }
+
+    // ========================================================
+    // SIN HORARIO
+    // ========================================================
+
+    else {
+
+      marcador =
+        'Pendiente';
+
+    }
+
+
+    const partidoDiv =
+      document.createElement('div');
+
+    partidoDiv.className =
+      'next-match';
+
+
+    partidoDiv.innerHTML = `
+
+      <span class="next-team-home">
+        ${escaparHTML(local)}
+      </span>
+
+      <span class="next-score ${
+        !jugado
+          ? 'pending'
+          : ''
+      }">
+
+        ${escaparHTML(marcador)}
+
+      </span>
+
+      <span class="next-team-away">
+        ${escaparHTML(visitante)}
+      </span>
+
+    `;
+
+
+    container.appendChild(
+      partidoDiv
+    );
+
+  });
+
+
+  return container;
+
+}
+
+function formatearHorario(valor) {
+
+  const texto =
+    String(valor).trim();
+
+
+  /*
+   * Si Google Sheets devuelve algo como:
+   * 18:00
+   * 18:00:00
+   *
+   * nos quedamos con HH:MM.
+   */
+
+  const coincidencia =
+    texto.match(
+      /(\d{1,2}):(\d{2})/
+    );
+
+
+  if (coincidencia) {
+
+    const horas =
+      coincidencia[1]
+        .padStart(2, '0');
+
+    const minutos =
+      coincidencia[2];
+
+    return `${horas}:${minutos}`;
+
+  }
+
+
+  // Si el valor no tiene formato de hora,
+  // mostramos el contenido original.
+
+  return texto;
+
+}
+      
+
+      
+  // ==========================================================
+  // BUSCAR ÚLTIMA JORNADA COMPLETAMENTE JUGADA
+  // ==========================================================
+
+  let ultimaJornada = null;
+
+  jornadasOrdenadas.forEach(jornada => {
+
+    const partidosJornada =
+      jornadas[jornada];
+
+    const todosJugados =
+      partidosJornada.length > 0 &&
+      partidosJornada.every(partido => {
+
+        const gl =
+          convertirGoles(
+            partido['Goles Local']
+          );
+
+        const gv =
+          convertirGoles(
+            partido['Goles Visitante']
+          );
+
+        return (
+          gl !== null &&
+          gv !== null
+        );
+
+      });
+
+    if (todosJugados) {
+      ultimaJornada = jornada;
+    }
+
+  });
+
+
+  // ==========================================================
+  // BUSCAR SIGUIENTE JORNADA
+  // ==========================================================
+
+  let siguienteJornada = null;
+
+  for (
+    const jornada of jornadasOrdenadas
+  ) {
+
+    const partidosJornada =
+      jornadas[jornada];
+
+    const hayPartidosSinJugar =
+      partidosJornada.some(partido => {
+
+        const gl =
+          convertirGoles(
+            partido['Goles Local']
+          );
+
+        const gv =
+          convertirGoles(
+            partido['Goles Visitante']
+          );
+
+        return (
+          gl === null ||
+          gv === null
+        );
+
+      });
+
+    if (hayPartidosSinJugar) {
+
+      siguienteJornada = jornada;
+
+      break;
+
+    }
+
+  }
+
+
+  // ==========================================================
+  // CREAR BLOQUE DE ÚLTIMA JORNADA
+  // ==========================================================
+
+  if (ultimaJornada) {
+
+    const bloqueUltima =
+      document.createElement('div');
+
+    bloqueUltima.innerHTML = `
+
+      <div class="next-round-header">
+
+        <div class="next-round-title">
+          ✅ Última jornada jugada
+        </div>
+
+        <div class="next-round-description">
+          ${escaparHTML(ultimaJornada)}
+        </div>
+
+      </div>
+
+    `;
+
+    contenedor.appendChild(
+      bloqueUltima
+    );
+
+
+    const partidosUltima =
+      crearListaPartidos(
+        jornadas[ultimaJornada],
+        false
+      );
+
+    contenedor.appendChild(
+      partidosUltima
+    );
+
+  }
+
+
+  // ==========================================================
+  // SEPARADOR
+  // ==========================================================
+
+  if (
+    ultimaJornada &&
+    siguienteJornada
+  ) {
+
+    const separador =
+      document.createElement('div');
+
+    separador.style.height = '30px';
+
+    contenedor.appendChild(
+      separador
+    );
+
+  }
+
+
+  // ==========================================================
+  // CREAR BLOQUE DE SIGUIENTE JORNADA
+  // ==========================================================
+
+  if (siguienteJornada) {
+
+    const bloqueSiguiente =
+      document.createElement('div');
+
+    bloqueSiguiente.innerHTML = `
+
+      <div class="next-round-header">
+
+        <div class="next-round-title">
+          📅 Siguiente jornada
+        </div>
+
+        <div class="next-round-description">
+          ${escaparHTML(siguienteJornada)}
+        </div>
+
+      </div>
+
+    `;
+
+    contenedor.appendChild(
+      bloqueSiguiente
+    );
+
+
+    const partidosSiguiente =
+      crearListaPartidos(
+        jornadas[siguienteJornada],
+        true
+      );
+
+    contenedor.appendChild(
+      partidosSiguiente
+    );
+
+  }
+
+
+  // ==========================================================
+  // SI TODO EL TORNEO ESTÁ TERMINADO
+  // ==========================================================
+
+  if (
+    !ultimaJornada &&
+    !siguienteJornada
+  ) {
+
+    contenedor.innerHTML = `
+
+      <div class="all-finished">
+
+        <div class="icon">
+          🏆
+        </div>
+
+        <h2>
+          ¡Todas las jornadas completadas!
+        </h2>
+
+        <p>
+          No hay partidos pendientes en el torneo.
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+}
 
     // ============================================================
     // ORDENAR JORNADAS
