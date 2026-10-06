@@ -401,6 +401,40 @@
       color: var(--primary-color);
     }
 
+  /* ============================================================
+     ÚLTIMA Y SIGUIENTE JORNADA
+     ============================================================ */
+
+   .proximas-jornadas-grid {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 25px;
+     align-items: start;
+   }
+
+
+  /* Cada cuadro de jornada */
+
+  .jornada-resumen {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+
+  /* En pantallas pequeñas: una debajo de otra */
+
+  @media (max-width: 768px) {
+
+    .proximas-jornadas-grid {
+      grid-template-columns: 1fr;
+    }
+
+  }
+
+
+    
     /* ==============================
        RESPONSIVE
        ============================== */
@@ -1199,7 +1233,8 @@
                 convertirGoles(
                   partido['Goles Visitante']
                 );
-
+              const horario = 
+                obtenerTexto(partido['Horario']);
 
               const jugado =
                 golesLocal !== null &&
@@ -1211,7 +1246,8 @@
                   ? `${golesLocal} - ${golesVisitante}`
                   : 'Pendiente';
 
-
+              let marcador;
+                
               const li =
                 document.createElement('li');
 
@@ -1277,6 +1313,15 @@ function renderizarProximaJornada(partidos) {
 
   contenedor.innerHTML = '';
 
+  const grid =
+  document.createElement('div');
+
+grid.className =
+  'proximas-jornadas-grid';
+
+contenedor.appendChild(grid);
+
+  
   const jornadas =
     agruparJornadas(partidos);
 
@@ -1395,7 +1440,7 @@ function renderizarProximaJornada(partidos) {
 
     `;
 
-    contenedor.appendChild(
+    grid.appendChild(
       bloqueUltima
     );
 
@@ -1405,7 +1450,7 @@ function renderizarProximaJornada(partidos) {
         jornadas[ultimaJornada]
       );
 
-    contenedor.appendChild(
+    bloqueUltima.appendChild(
       partidosUltima
     );
 
