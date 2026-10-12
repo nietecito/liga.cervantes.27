@@ -316,7 +316,8 @@
     }
 
     .next-matches {
-      max-width: 750px;
+      width: 100%;
+      max-width: 650px;
       margin: 0 auto;
     }
 
@@ -408,9 +409,13 @@
 
    .proximas-jornadas-grid {
      display: grid;
-     grid-template-columns: 1fr 1fr;
+     grid-template-columns: minmax(0, 850px);
+     justify-content: center;
      gap: 25px;
      align-items: start;
+     width: 100%;
+     max-width: 900px;
+     margin: 0 auto;
    }
 
 
@@ -1439,7 +1444,7 @@ contenedor.appendChild(grid);
       <div class="next-round-header">
 
         <div class="next-round-title">
-          ✅ Última jornada jugada
+          ✅ Última jornada
         </div>
 
         <div class="next-round-description">
