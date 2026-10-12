@@ -1629,6 +1629,11 @@ function crearListaPartidos(partidos, mostrarCampo = false) {
         partido['Horario']
       );
 
+    const campo =
+      obtenerTexto(
+        partido['Campo']
+      );
+
     const aplazado =
       obtenerTexto(partido['Estado']).toLowerCase() === 'aplazado';
 
