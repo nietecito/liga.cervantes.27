@@ -462,7 +462,7 @@
 
    .proximas-jornadas-grid .next-match {
      gap: 8px;
-     font-size: 0.82rem;
+     font-size: 1rem;
    }
 
    .proximas-jornadas-grid .next-score {
@@ -541,6 +541,13 @@
         padding: 5px;
       }
     }
+      /* Aumentar el tamaño de los equipos en ordenador */
+  @media (min-width: 769px) {
+      .proximas-jornadas-grid .next-match {
+        font-size: 1rem;
+      }
+    }
+    
   </style>
 </head>
 
