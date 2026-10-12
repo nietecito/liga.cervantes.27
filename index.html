@@ -1234,20 +1234,24 @@
                 convertirGoles(
                   partido['Goles Visitante']
                 );
-              const horario = 
+              const horario =
                 obtenerTexto(partido['Horario']);
+
+              const aplazado =
+                obtenerTexto(partido['Estado']).toLowerCase() === 'aplazado';
 
               const jugado =
                 golesLocal !== null &&
                 golesVisitante !== null;
 
-              // Si no hay resultado, mostrar el horario si está disponible.
-              // "Pendiente" solo cuando faltan tanto los goles como el horario.
-              const marcador = jugado
-                ? `${golesLocal} - ${golesVisitante}`
-                : horario
-                  ? formatearHorario(horario)
-                  : 'Pendiente';
+              // Un partido aplazado se identifica por la columna Estado.
+              const marcador = aplazado
+                ? 'Aplazado'
+                : jugado
+                  ? `${golesLocal} - ${golesVisitante}`
+                  : horario
+                    ? formatearHorario(horario)
+                    : 'Pendiente';
 const li =
                 document.createElement('li');
 
@@ -1259,8 +1263,10 @@ const li =
                 </span>
 
                 <span class="score ${
-                 !jugado ? 'pending' : ''
-                }">                
+                  aplazado || (!jugado && !horario)
+                    ? 'pending'
+                    : ''
+                }">
                   ${marcador}
                 </span>
 
@@ -1353,7 +1359,10 @@ contenedor.appendChild(grid);
             partido['Goles Visitante']
           );
 
-        return (
+        const aplazado =
+          obtenerTexto(partido['Estado']).toLowerCase() === 'aplazado';
+
+        return aplazado || (
           gl !== null &&
           gv !== null
         );
@@ -1395,7 +1404,10 @@ contenedor.appendChild(grid);
             partido['Goles Visitante']
           );
 
-        return (
+        const aplazado =
+          obtenerTexto(partido['Estado']).toLowerCase() === 'aplazado';
+
+        return !aplazado && (
           gl === null ||
           gv === null
         );
@@ -1594,6 +1606,8 @@ function crearListaPartidos(partidos) {
         partido['Horario']
       );
 
+    const aplazado =
+      obtenerTexto(partido['Estado']).toLowerCase() === 'aplazado';
 
     const jugado =
       golesLocal !== null &&
@@ -1607,7 +1621,13 @@ function crearListaPartidos(partidos) {
     // PARTIDO YA JUGADO
     // ========================================================
 
-    if (jugado) {
+    if (aplazado) {
+
+      marcador = 'Aplazado';
+
+    }
+
+    else if (jugado) {
 
       marcador =
         `${golesLocal} - ${golesVisitante}`;
@@ -1653,7 +1673,7 @@ function crearListaPartidos(partidos) {
       </span>
 
       <span class="next-score ${
-        !jugado
+        aplazado || !jugado
           ? 'pending'
           : ''
       }">
