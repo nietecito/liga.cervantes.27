@@ -232,10 +232,11 @@
        ============================== */
 
     .jornadas-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-      gap: 20px;
-    }
+       display: grid;
+       grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 420px));
+       justify-content: center;
+       gap: 20px;
+     }
 
     .jornada-card {
       border: 1px solid var(--border-color);
@@ -1240,10 +1241,12 @@
                 golesLocal !== null &&
                 golesVisitante !== null;
 
-
-              const marcador =
-                jugado
-                  ? `${golesLocal} - ${golesVisitante}`
+              // Si no hay resultado, mostrar el horario si está disponible.
+              // "Pendiente" solo cuando faltan tanto los goles como el horario.
+              const marcador = jugado
+                ? `${golesLocal} - ${golesVisitante}`
+                : horario
+                  ? formatearHorario(horario)
                   : 'Pendiente';
 const li =
                 document.createElement('li');
@@ -1256,9 +1259,9 @@ const li =
                 </span>
 
                 <span class="score ${
-                  jugado
-                    ? ''
-                    : 'pending'
+                  !jugado && !horario
+                    ? 'pending'
+                    : ''
                 }">
                   ${marcador}
                 </span>
