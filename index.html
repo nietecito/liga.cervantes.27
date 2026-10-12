@@ -316,7 +316,8 @@
     }
 
     .next-matches {
-      max-width: 750px;
+      width: 100%;
+      max-width: none;
       margin: 0 auto;
     }
 
@@ -423,9 +424,49 @@
 
    .proximas-jornadas-grid {
      display: grid;
-     grid-template-columns: 1fr 1fr;
-     gap: 25px;
+     grid-template-columns: repeat(2, minmax(0, 1fr));
+     gap: 20px;
      align-items: start;
+     width: 100%;
+     max-width: 1000px;
+     margin: 0 auto;
+   }
+
+   .proximas-jornadas-grid > .round-panel {
+     min-width: 0;
+     background: #ffffff;
+     border: 1px solid var(--border-color);
+     border-radius: 12px;
+     padding: 18px;
+     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+   }
+
+   .proximas-jornadas-grid .next-round-header {
+     text-align: center;
+     margin-bottom: 12px;
+   }
+
+   .proximas-jornadas-grid .next-round-title {
+     font-size: 1.25rem;
+   }
+
+   .proximas-jornadas-grid .next-round-description {
+     font-size: 0.9rem;
+   }
+
+   .proximas-jornadas-grid .next-match-item {
+     padding: 10px 4px;
+   }
+
+   .proximas-jornadas-grid .next-match {
+     gap: 8px;
+     font-size: 0.88rem;
+   }
+
+   .proximas-jornadas-grid .next-score {
+     padding: 8px 10px;
+     min-width: 64px;
+     font-size: 0.88rem;
    }
 
 
@@ -442,11 +483,10 @@
   /* En pantallas pequeñas: una debajo de otra */
 
   @media (max-width: 768px) {
-
     .proximas-jornadas-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 560px;
     }
-
   }
 
 
@@ -1456,6 +1496,8 @@ contenedor.appendChild(grid);
     const bloqueUltima =
       document.createElement('div');
 
+    bloqueUltima.className = 'round-panel';
+
     bloqueUltima.innerHTML = `
 
       <div class="next-round-header">
@@ -1490,27 +1532,6 @@ contenedor.appendChild(grid);
 
 
   // ==========================================================
-  // SEPARADOR ENTRE JORNADAS
-  // ==========================================================
-
-  if (
-    ultimaJornada &&
-    siguienteJornada
-  ) {
-
-    const separador =
-      document.createElement('div');
-
-    separador.style.height = '30px';
-
-    contenedor.appendChild(
-      separador
-    );
-
-  }
-
-
-  // ==========================================================
   // MOSTRAR SIGUIENTE JORNADA
   // ==========================================================
 
@@ -1518,6 +1539,8 @@ contenedor.appendChild(grid);
 
     const bloqueSiguiente =
       document.createElement('div');
+
+    bloqueSiguiente.className = 'round-panel';
 
     bloqueSiguiente.innerHTML = `
 
@@ -1535,7 +1558,7 @@ contenedor.appendChild(grid);
 
     `;
 
-    contenedor.appendChild(
+    grid.appendChild(
       bloqueSiguiente
     );
 
@@ -1546,7 +1569,7 @@ contenedor.appendChild(grid);
         true
       );
 
-    contenedor.appendChild(
+    bloqueSiguiente.appendChild(
       partidosSiguiente
     );
 
