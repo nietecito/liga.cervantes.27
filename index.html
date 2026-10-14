@@ -1582,12 +1582,12 @@
         error: function(error) {
 
           console.error(
-            'Error cargando CSV:',
+            'Error cargando',
             error
           );
 
           mostrarError(
-            'No se han podido cargar los datos. Revisa que el Google Sheet esté publicado correctamente.'
+            'No se han podido cargar los datos. Estamos solucionando el problema.'
           );
 
         }
@@ -2248,7 +2248,7 @@ grid.appendChild(columnaIzquierda);
     bloqueUltima.innerHTML = `
       <button type="button" class="results-toggle" aria-expanded="true">
         <span class="next-round-header">
-          <span class="next-round-title">✅ Últimos Resultados</span>
+          <span class="next-round-title">✅ </span>
           <span class="next-round-description">${escaparHTML(ultimaJornada)}</span>
         </span>
         <span class="results-chevron" aria-hidden="true">⌄</span>
@@ -2659,7 +2659,7 @@ function renderizarGoleadores() {
   if (!cont) return;
   if (!goleadoresGlobal.length) {
     cont.className = 'empty-state';
-    cont.textContent = 'Aún no hay goles registrados. Añade una fila por cada gol en la pestaña Detalles y escribe Gol en la columna Tipo.';
+    cont.textContent = 'Aún no hay goles registrados.';
     return;
   }
   const acumulado = new Map();
@@ -2674,7 +2674,7 @@ function renderizarGoleadores() {
     acumulado.set(key, actual);
   });
   const lista = [...acumulado.values()].sort((a,b) => b.goles-a.goles || a.jugador.localeCompare(b.jugador,'es'));
-  if (!lista.length) { cont.className='empty-state'; cont.textContent='No se encontraron filas válidas. Revisa las columnas Jugador, Equipo y Tipo en la pestaña Detalles.'; return; }
+  if (!lista.length) { cont.className='empty-state'; cont.textContent='No se encontraron filas válidas.'; return; }
   cont.className = 'table-container';
   cont.innerHTML = `<table class="scorers-table"><thead><tr><th>Pos.</th><th style="text-align:left">Jugador</th><th style="text-align:left">Equipo</th><th>Goles</th></tr></thead><tbody>${lista.map((j,i)=>`<tr><td>${i+1}</td><td style="text-align:left;font-weight:600">${escaparHTML(j.jugador)}</td><td style="text-align:left">${escaparHTML(j.equipo || '—')}</td><td><strong>${j.goles}</strong></td></tr>`).join('')}</tbody></table>`;
 }
@@ -2752,7 +2752,7 @@ function filtrarAlineacion(filas, jornada) {
 function htmlAlineacion(equipo, jugadores) {
   return `<div class="lineup-team"><h4>${escaparHTML(equipo)}</h4>${jugadores.length
     ? `<ul>${jugadores.map(j => `<li>${j.dorsal ? `<strong>${escaparHTML(j.dorsal)}</strong> ` : ''}${escaparHTML(j.jugador)}</li>`).join('')}</ul>`
-    : '<p>Sin alineación registrada para esta jornada.</p>'}</div>`;
+    : '<p>Sin alineación registrada.</p>'}</div>`;
 }
 
 function mostrarFichaPartido(partido) {
