@@ -2455,12 +2455,29 @@ function renderizarRachas(partidos) {
     agregar(visitante, gv > gl ? 'V' : gv === gl ? 'E' : 'D');
   });
 
+  // Respetar el orden real de la clasificación visible, no ordenar por los puntos de la racha.
+  const normalizarNombreEquipo = nombre => String(nombre || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLocaleLowerCase('es');
+  const ordenClasificacion = new Map();
+  document.querySelectorAll('#body-clasificacion tr').forEach((fila, indice) => {
+    const celdaNombre = fila.querySelector('td.team-name') || fila.cells?.[1];
+    const nombre = celdaNombre?.textContent?.trim();
+    if (nombre) ordenClasificacion.set(normalizarNombreEquipo(nombre), indice);
+  });
+
   const lista = [...porEquipo.entries()].map(([nombre, partidosEquipo]) => {
     partidosEquipo.sort((a,b) => a.jornadaNum - b.jornadaNum || a.indice - b.indice);
     const ultimos = partidosEquipo.slice(-5);
     const puntos = ultimos.reduce((total, p) => total + (p.resultado === 'V' ? 3 : p.resultado === 'E' ? 1 : 0), 0);
     return { nombre, ultimos, puntos, jugados: ultimos.length, victorias: ultimos.filter(p => p.resultado === 'V').length };
-  }).sort((a,b) => b.puntos - a.puntos || b.victorias - a.victorias || a.nombre.localeCompare(b.nombre,'es'));
+  }).sort((a,b) => {
+    const posA = ordenClasificacion.get(normalizarNombreEquipo(a.nombre));
+    const posB = ordenClasificacion.get(normalizarNombreEquipo(b.nombre));
+    if (posA !== undefined && posB !== undefined) return posA - posB;
+    if (posA !== undefined) return -1;
+    if (posB !== undefined) return 1;
+    return a.nombre.localeCompare(b.nombre, 'es');
+  });
 
   if (!lista.length) return '<p class="racha-empty">Todavía no hay equipos para mostrar las rachas.</p>';
   const filas = lista.map(equipo => {
