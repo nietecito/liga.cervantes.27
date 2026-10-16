@@ -903,38 +903,37 @@
       }
     }
 
-    /* Clasificación en móvil: mostrar las columnas esenciales sin desplazamiento horizontal */
+    /* Clasificación en móvil: letra compacta y desplazamiento horizontal para ver todas las columnas */
     @media (max-width: 600px) {
       #tab-clasificacion .table-container {
-        overflow-x: hidden;
+        display: block;
         width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x pan-y;
       }
       #tab-clasificacion table {
-        width: 100%;
-        min-width: 0;
-        table-layout: fixed;
-        font-size: .78rem;
+        width: max-content;
+        min-width: 720px;
+        table-layout: auto;
+        font-size: .72rem;
       }
       #tab-clasificacion th,
       #tab-clasificacion td {
-        padding: 10px 5px;
-        white-space: normal;
+        padding: 8px 6px;
+        white-space: nowrap;
       }
-      #tab-clasificacion th:nth-child(1),
-      #tab-clasificacion td:nth-child(1) { width: 16%; }
       #tab-clasificacion th:nth-child(2),
       #tab-clasificacion td:nth-child(2) {
-        width: 64%;
+        min-width: 150px;
         text-align: left;
       }
-      #tab-clasificacion th:nth-child(3),
-      #tab-clasificacion td:nth-child(3) { width: 20%; }
-      #tab-clasificacion th:nth-child(n+4),
-      #tab-clasificacion td:nth-child(n+4) { display: none; }
       #tab-clasificacion td.team-name {
-        overflow-wrap: anywhere;
+        overflow-wrap: normal;
         word-break: normal;
-        font-size: .78rem;
+        font-size: .72rem;
       }
       #tab-clasificacion h2 { font-size: 1.22rem; }
     }
