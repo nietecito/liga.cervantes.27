@@ -915,21 +915,31 @@
         touch-action: pan-x pan-y;
       }
       #tab-clasificacion table {
-        width: max-content;
+        /* La tabla sigue siendo desplazable, pero las tres primeras columnas
+           quedan compactas para que Pos, Equipo y Pts se vean al entrar. */
+        width: 720px;
         min-width: 720px;
-        table-layout: auto;
+        table-layout: fixed;
         font-size: .72rem;
       }
       #tab-clasificacion th,
       #tab-clasificacion td {
-        padding: 8px 6px;
+        padding: 8px 5px;
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
+      #tab-clasificacion th:nth-child(1),
+      #tab-clasificacion td:nth-child(1) { width: 48px; }
       #tab-clasificacion th:nth-child(2),
       #tab-clasificacion td:nth-child(2) {
-        min-width: 150px;
+        width: 170px;
         text-align: left;
       }
+      #tab-clasificacion th:nth-child(3),
+      #tab-clasificacion td:nth-child(3) { width: 52px; }
+      #tab-clasificacion th:nth-child(n+4),
+      #tab-clasificacion td:nth-child(n+4) { width: 56px; }
       #tab-clasificacion td.team-name {
         overflow-wrap: normal;
         word-break: normal;
