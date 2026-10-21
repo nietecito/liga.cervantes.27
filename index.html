@@ -4,14 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google-site-verification" content="GrjsXBq5ZrAGSzWaPEkTGkFw3HmKAt9ZfkpSBcXvz7A" />
-  <meta name="description" content="Sigue la Liga Cervantes 2026-27: clasificación de la 4.ª División de los domingos por la mañana, resultados por jornada y próximos partidos." />
+  <meta name="description" content="Sigue la Liga Cervantes 2026-27: clasificación de la 4.ª División de los domingos por la mañana, resultados por jornada, próximos partidos y máximos goleadores." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://nietecito.github.io/liga.cervantes.27/" />
   
   <title>Liga Cervantes 2026-27 | Clasificación y resultados</title>
   
   <link rel="icon" type="image/png" href="cervantes.png">
+<!-- Icono de Cervantes obtenido de Flaticon.es -->
 
+  
   <!-- PapaParse alojado en el propio repositorio de GitHub Pages -->
   <script src="./papaparse.min.js"></script>
 
@@ -73,6 +75,10 @@
       margin: 0 auto;
     }
 
+    /* ==============================
+       MENSAJES
+       ============================== */
+
     #loading {
       text-align: center;
       font-size: 1.1rem;
@@ -93,9 +99,13 @@
       margin-bottom: 20px;
     }
 
+    /* ==============================
+       PESTAÑAS
+       ============================== */
+
     .tabs {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 5px;
       background: #e2e8f0;
       padding: 5px;
@@ -133,6 +143,10 @@
       display: block;
     }
 
+    /* ==============================
+       SECCIONES
+       ============================== */
+
     section {
       background: var(--card-bg);
       padding: 24px;
@@ -153,6 +167,10 @@
       margin-bottom: 20px;
       font-size: 0.95rem;
     }
+
+    /* ==============================
+       TABLA CLASIFICACIÓN
+       ============================== */
 
     .table-container {
       overflow-x: auto;
@@ -193,25 +211,33 @@
       font-weight: bold;
     }
 
+    /* Primera posición */
     tbody tr:nth-child(1) td.position {
       color: var(--gold);
       font-size: 1.05rem;
     }
 
+    /* Segunda posición */
     tbody tr:nth-child(2) td.position {
       color: var(--silver);
       font-size: 1.05rem;
     }
 
+    /* Tercera posición */
     tbody tr:nth-child(3) td.position {
       color: var(--bronze);
       font-size: 1.05rem;
     }
 
+    /* Puntos */
     td.points {
       font-weight: bold;
       color: var(--primary-color);
     }
+
+    /* ==============================
+       JORNADAS
+       ============================== */
 
     .jornadas-grid {
        display: grid;
@@ -277,106 +303,373 @@
       font-size: 0.8rem;
     }
 
-    .proximas-jornadas-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 20px;
-      align-items: start;
+    /* ==============================
+       PRÓXIMA JORNADA
+       ============================== */
+
+    .next-round-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .next-round-title {
+      font-size: 1.5rem;
+      color: var(--secondary-color);
+      font-weight: bold;
+    }
+
+    .next-round-description {
+      color: #718096;
+      margin-top: 5px;
+    }
+
+    .next-matches {
       width: 100%;
-      max-width: 1000px;
+      max-width: none;
       margin: 0 auto;
     }
 
-    .proximas-jornadas-grid > .round-panel {
-      min-width: 0;
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 18px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    .next-match-item {
+      padding: 14px 10px;
+      border-bottom: 1px solid var(--border-color);
     }
 
-    .match-clickable {
-      cursor: pointer;
-      transition: background .15s ease;
-    }
-    .jornada-card li.match-clickable:hover,
-    .next-match-item.match-clickable:hover {
-      background: #edf5ff;
+    .next-match-item:last-child {
+      border-bottom: none;
     }
 
-    .match-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background: rgba(15,23,42,.65);
-      padding: 18px;
-      overflow-y: auto;
-    }
-    .match-modal.open {
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-    }
-    .match-modal-card {
-      background: #fff;
-      width: min(760px, 100%);
-      margin: auto;
-      border-radius: 14px;
-      padding: 24px;
-      box-shadow: 0 18px 50px rgba(0,0,0,.25);
-      position: relative;
-    }
-    .modal-close {
-      position: absolute;
-      top: 10px;
-      right: 12px;
-      border: 0;
-      background: #edf2f7;
-      border-radius: 8px;
-      padding: 7px 11px;
-      cursor: pointer;
-      font-size: 1.1rem;
-    }
-    .match-scoreline {
+    .next-match {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      gap: 14px;
+      gap: 15px;
+    }
+
+    .match-field {
+      display: table;
+      margin: 8px auto 0;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #eaf2fc;
+      color: #245a9a;
+      font-size: 0.78rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .next-team-home {
+      text-align: right;
+      font-weight: 400;
+    }
+
+    .next-team-away {
+      text-align: left;
+      font-weight: 400;
+    }
+
+    .next-score {
+      min-width: 80px;
       text-align: center;
-      margin: 20px 0;
+      background: #edf2f7;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-weight: bold;
     }
-    .match-scoreline .team-name {
-      font-weight: 700;
-      color: var(--primary-color);
-      overflow-wrap: anywhere;
+
+    .next-score.pending {
+      background: var(--pending-bg);
+      color: var(--pending-text);
+      border: 1px solid var(--pending-border);
+      font-size: 0.8rem;
     }
-    .match-scoreline .big-score {
-      font-size: 1.7rem;
-      font-weight: 800;
-      white-space: nowrap;
+
+    .pending-label {
+      text-align: center;
+      margin-top: 20px;
+      color: var(--pending-text);
+      font-size: 0.9rem;
     }
-    .detail-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 12px;
-      margin-top: 16px;
+
+    .all-finished {
+      text-align: center;
+      padding: 35px 15px;
+      color: #718096;
     }
-    .detail-panel {
+
+    .all-finished .icon {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    /* ==============================
+       INFORMACIÓN
+       ============================== */
+
+    .info-bar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .info-item {
+      background: white;
       border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 14px;
-      min-width: 0;
+      border-radius: 7px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      color: #4a5568;
     }
-    .detail-panel h3 {
+
+    .info-item strong {
       color: var(--primary-color);
-      margin-bottom: 8px;
-      font-size: 1rem;
     }
-    .detail-panel p {
-      font-size: .92rem;
-      overflow-wrap: anywhere;
+
+  /* ============================================================
+     ÚLTIMA Y SIGUIENTE JORNADA
+     ============================================================ */
+
+   .proximas-jornadas-grid {
+     display: grid;
+     grid-template-columns: repeat(2, minmax(0, 1fr));
+     gap: 20px;
+     align-items: start;
+     width: 100%;
+     max-width: 1000px;
+     margin: 0 auto;
+   }
+
+   .proximas-jornadas-grid > .round-panel {
+     min-width: 0;
+     background: #ffffff;
+     border: 1px solid var(--border-color);
+     border-radius: 12px;
+     padding: 18px;
+     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+   }
+
+   .proximas-jornadas-grid .next-round-header {
+     text-align: center;
+     margin-bottom: 12px;
+   }
+
+   .proximas-jornadas-grid .next-round-title {
+     font-size: 1.25rem;
+   }
+
+   .proximas-jornadas-grid .next-round-description {
+     font-size: 0.9rem;
+   }
+
+   .proximas-jornadas-grid .next-match-item {
+     padding: 10px 4px;
+   }
+
+   .proximas-jornadas-grid .next-match {
+     gap: 8px;
+     font-size: 1rem;
+   }
+
+   .proximas-jornadas-grid .next-score {
+     padding: 8px 10px;
+     min-width: 64px;
+     font-size: 0.82rem;
+   }
+
+
+  /* Cada cuadro de jornada */
+
+  .jornada-resumen {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+
+  /* En pantallas pequeñas: una debajo de otra */
+
+  @media (max-width: 768px) {
+    .proximas-jornadas-grid {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 560px;
+    }
+  }
+
+
+    
+    /* ==============================
+       RESPONSIVE
+       ============================== */
+
+    @media (max-width: 600px) {
+
+      body {
+        padding: 10px;
+      }
+
+      header {
+        margin-bottom: 15px;
+        padding: 20px 10px;
+      }
+
+      section {
+        padding: 15px;
+      }
+
+      .tabs {
+        gap: 3px;
+        padding: 3px;
+      }
+
+      .tab-button {
+        padding: 11px 5px;
+        font-size: 0.78rem;
+      }
+
+      .jornadas-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .jornada-card li {
+        font-size: 0.82rem;
+      }
+
+      .next-match {
+        gap: 7px;
+        padding: 14px 2px;
+        font-size: 0.85rem;
+      }
+
+      .next-score {
+        min-width: 68px;
+        padding: 5px;
+      }
+    }
+      /* Aumentar el tamaño de los equipos en ordenador */
+  @media (min-width: 769px) {
+      .proximas-jornadas-grid .next-match {
+        font-size: 1rem;
+      }
+    }
+/* Mantener el tamaño original en móviles */
+@media screen and (max-width: 768px) {
+    .proximas-jornadas-grid .next-match {
+        font-size: 0.82rem;
+    }
+}
+
+    
+
+
+    /* Nueva sección de goleadores y fichas de partido */
+    .tab-button { min-width: 0; }
+    .match-clickable { cursor: pointer; transition: background .15s ease; }
+    .jornada-card li.match-clickable:hover,
+    .next-match-item.match-clickable:hover { background: #edf5ff; }
+    .match-hint { color: #718096; font-size: .78rem; text-align: center; margin-top: 8px; }
+    .scorers-table { width: 100%; min-width: 0; }
+    .scorers-table th { background: var(--secondary-color); color: #fff; padding: 10px 8px; }
+    .scorers-table td { padding: 10px 8px; border-bottom: 1px solid var(--border-color); }
+    .empty-state { padding: 22px; text-align: center; color: #718096; background: #f8fafc; border-radius: 8px; }
+    .match-modal { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(15,23,42,.65); padding: 18px; overflow-y: auto; }
+    .match-modal.open { display: flex; align-items: flex-start; justify-content: center; }
+    .match-modal-card { background: #fff; width: min(760px, 100%); margin: auto; border-radius: 14px; padding: 24px; box-shadow: 0 18px 50px rgba(0,0,0,.25); position: relative; }
+    .modal-close { position: absolute; top: 10px; right: 12px; border: 0; background: #edf2f7; border-radius: 8px; padding: 7px 11px; cursor: pointer; font-size: 1.1rem; }
+    .match-scoreline { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 14px; text-align: center; margin: 20px 0; }
+    .match-scoreline .team-name { font-weight: 700; color: var(--primary-color); overflow-wrap: anywhere; }
+    .match-scoreline .big-score { font-size: 1.7rem; font-weight: 800; white-space: nowrap; }
+    .detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-top: 16px; }
+    .detail-panel { border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; min-width: 0; }
+    .detail-panel h3 { color: var(--primary-color); margin-bottom: 8px; font-size: 1rem; }
+    .detail-panel p, .detail-panel li { font-size: .92rem; overflow-wrap: anywhere; }
+    .detail-panel ul { padding-left: 18px; }
+    .detail-wide { grid-column: 1 / -1; }
+    .goalboard { border-radius: 9px; overflow: hidden; background: #f7fafc; }
+    .goalboard-head { display: grid; grid-template-columns: minmax(0,1fr) minmax(100px,.8fr) minmax(0,1fr); align-items: center; gap: 8px; text-align: center; padding: 8px 0 12px; }
+    .goalboard-team { color: var(--primary-color); font-size: 1.05rem; font-weight: 800; overflow-wrap: anywhere; }
+    .goalboard-score { display: flex; justify-content: center; align-items: center; gap: 0; background: #edf2f7; border-radius: 7px; font-size: 1.7rem; font-weight: 800; line-height: 1.4; }
+    .goalboard-score span { flex: 1; padding: 0 8px; }
+    .goalboard-events { display: grid; gap: 5px; }
+    .goalboard-event { display: grid; grid-template-columns: minmax(0,1fr) 66px minmax(0,1fr); align-items: center; gap: 7px; font-size: .9rem; line-height: 1.35; }
+    .goalboard-event-local { text-align: right; }
+    .goalboard-event-away { text-align: left; }
+    .goalboard-event-local, .goalboard-event-away { overflow-wrap: anywhere; }
+    .goalboard-event .scorer { color: #b7791f; font-weight: 700; }
+    .goalboard-event .minute { color: #718096; font-weight: 600; white-space: nowrap; }
+    .goalboard-event-score { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .goalboard-empty { text-align: center; color: #718096; padding: 10px 0; }
+    .detail-panel:has(.goalboard) { padding: 14px 16px; }
+    .detail-wide { grid-column: 1 / -1; }
+    .lineups-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .lineup-team { min-width: 0; }
+    .lineup-team h4 { color: var(--primary-color); margin: 0 0 10px; text-align: center; overflow-wrap: anywhere; }
+    .lineup-team ul { list-style: none; padding-left: 0; margin: 0; }
+    .lineup-team li { margin: 5px 0; text-align: left; }
+    .stats-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; padding: 6px 0; border-bottom: 1px solid #edf2f7; text-align: center; }
+    @media (max-width: 600px) {
+      .tab-button { font-size: .72rem; padding: 10px 2px; }
+      .match-modal { padding: 8px; }
+      .match-modal-card { padding: 20px 13px; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .detail-wide { grid-column: auto; }
+      .lineups-grid { grid-template-columns: 1fr; }
+      .match-scoreline { gap: 6px; }
+      .match-scoreline .big-score { font-size: 1.35rem; }
+    }
+
+  
+    /* Ajustes exclusivos para móviles: ficha y tabla de goleadores */
+    @media screen and (max-width: 600px) {
+      .match-modal { padding: 4px; }
+      .match-modal-card {
+        width: 100%;
+        padding: 16px 10px;
+        border-radius: 10px;
+      }
+      .match-modal-card > h2 { font-size: 1.2rem; padding-right: 34px; }
+      .match-modal-card .subtitulo { font-size: .78rem; margin: 8px 0; }
+      .match-scoreline { grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); gap: 4px; margin: 12px 0; }
+      .match-scoreline .team-name { font-size: .78rem; line-height: 1.2; }
+      .match-scoreline .big-score { font-size: 1.15rem; }
+      .detail-grid { gap: 7px; margin-top: 10px; }
+      .detail-panel { padding: 9px; border-radius: 8px; }
+      .detail-panel h3 { font-size: .86rem; margin-bottom: 5px; }
+      .detail-panel p, .detail-panel li { font-size: .78rem; line-height: 1.3; }
+      .goalboard { padding: 7px; }
+      .goalboard-event { grid-template-columns: minmax(0,1fr) 43px minmax(0,1fr); gap: 3px; font-size: .68rem; line-height: 1.25; }
+      .goalboard-event-score { font-size: .65rem; }
+      .goalboard-event .minute { white-space: normal; }
+      .lineups-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+      .lineup-team h4 { font-size: .76rem; line-height: 1.2; margin-bottom: 6px; }
+      .lineup-team li { font-size: .68rem !important; line-height: 1.25; margin: 4px 0; overflow-wrap: anywhere; }
+      .scorers-table { table-layout: fixed; }
+      .scorers-table th, .scorers-table td { padding: 7px 3px; font-size: .68rem; line-height: 1.25; overflow-wrap: anywhere; }
+      .scorers-table th:nth-child(1), .scorers-table td:nth-child(1) { width: 9%; }
+      .scorers-table th:nth-child(2), .scorers-table td:nth-child(2) { width: 36%; }
+      .scorers-table th:nth-child(3), .scorers-table td:nth-child(3) { width: 39%; }
+      .scorers-table th:nth-child(4), .scorers-table td:nth-child(4) { width: 16%; }
+      #tab-goleadores section { padding: 12px 8px; }
+      #tab-goleadores h2 { font-size: 1.35rem; }
+      #tab-goleadores .subtitulo { font-size: .9rem; }
+      #tab-goleadores .table-container { overflow-x: hidden; }
+    }
+
+
+    /* ============================================================
+       PULIDO VISUAL Y ADAPTACIÓN A MÓVILES
+       Solo estilos: no modifica los datos ni las funciones existentes.
+       ============================================================ */
+
+    :root {
+      --primary-color: #18365b;
+      --secondary-color: #2868a9;
+      --bg-color: #f3f6fb;
+      --border-color: #e1e8f1;
+      --pending-bg: #fff8ed;
+      --pending-border: #f3b46b;
+      --pending-text: #a94d12;
     }
 
     html {
@@ -386,14 +679,16 @@
 
     body {
       padding: clamp(10px, 2.2vw, 28px);
+      line-height: 1.55;
     }
 
     header {
-      margin-bottom: 22px;
-      padding: clamp(22px, 3vw, 32px) 20px;
-      border-radius: 14px;
+      max-width: 1600px;
+      margin: 0 auto 26px;
+      padding: clamp(24px, 3.5vw, 38px) 16px;
       background: linear-gradient(135deg, #18365b 0%, #214d7d 100%);
       border: 1px solid rgba(255,255,255,.12);
+      border-radius: 0 0 14px 14px;
       box-shadow: 0 8px 22px rgba(24,54,91,.13);
     }
 
@@ -402,36 +697,399 @@
       line-height: 1.2;
     }
 
-    .seo-intro {
+    header p {
+      margin-top: 9px;
+    }
+
+    main {
       width: 100%;
       max-width: 1210px;
-      margin: 22px auto 0;
-      padding: 18px 24px;
-      border-radius: 12px;
+    }
+
+    .tabs {
+      position: relative;
+      gap: 6px;
+      padding: 6px;
+      margin-bottom: 22px;
+      border: 1px solid #dfe6ef;
+      box-shadow: 0 3px 10px rgba(26,54,93,.035);
+    }
+
+    .tab-button {
+      min-height: 46px;
+      padding: 12px 10px;
+      border: 1px solid transparent;
+      transition: background-color .18s ease, color .18s ease, box-shadow .18s ease;
+    }
+
+    .tab-button.active {
+      border-color: #e7edf5;
+      box-shadow: 0 2px 7px rgba(26,54,93,.08);
+    }
+
+    section {
+      border: 1px solid #edf1f6;
+      border-radius: 14px;
+      box-shadow: 0 5px 18px rgba(26,54,93,.045);
+    }
+
+    h2 {
+      letter-spacing: -.02em;
+      line-height: 1.3;
+      border-bottom-width: 1px;
+      padding-bottom: 12px;
+    }
+
+    .jornada-card,
+    .proximas-jornadas-grid > .round-panel {
       background: #fff;
-      color: var(--text-color);
-      text-align: left;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+      border-color: #e0e8f2;
+      border-radius: 13px;
+      box-shadow: 0 3px 12px rgba(26,54,93,.045);
+      transition: box-shadow .18s ease, border-color .18s ease;
     }
 
-    .seo-intro h2 {
-      margin: 0 0 10px;
-      font-size: clamp(1.15rem, 2.2vw, 1.65rem);
-      line-height: 1.25;
+    .jornada-card h3 {
+      font-weight: 750;
     }
 
-    .seo-intro p {
-      margin: 0;
-      font-size: 1rem;
-      line-height: 1.5;
-    }
-    .seo-intro .last-update {
-      margin-top: 12px;
-      font-size: 0.82rem;
-      color: #758398;
-      line-height: 1.4;
+    .jornada-card li {
+      min-width: 0;
+      padding: 11px 2px;
+      line-height: 1.35;
     }
 
+    .jornada-card li:last-child,
+    .next-match-item:last-child {
+      border-bottom: 0;
+    }
+
+    .jornada-card li.match-clickable:hover,
+    .next-match-item.match-clickable:hover {
+      background: #f3f8ff;
+    }
+
+    .team-home,
+    .team-away,
+    .next-team-home,
+    .next-team-away {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .score,
+    .next-score {
+      font-variant-numeric: tabular-nums;
+      border-radius: 7px;
+    }
+
+    .next-match-item {
+      padding: 13px 5px;
+    }
+
+    .next-match {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 12px;
+      line-height: 1.35;
+    }
+
+    .next-score {
+      min-width: 72px;
+      border: 1px solid #e7edf5;
+    }
+
+    .next-score.pending {
+      border-color: var(--pending-border);
+    }
+
+    .match-field {
+      margin-top: 9px;
+      padding: 5px 11px;
+      letter-spacing: .01em;
+    }
+
+    .match-clickable:focus-visible,
+    .tab-button:focus-visible,
+    .modal-close:focus-visible {
+      outline: 3px solid rgba(49,130,206,.55);
+      outline-offset: 2px;
+    }
+
+    .table-container {
+      border-radius: 9px;
+      scrollbar-color: #b9c8da #edf2f7;
+    }
+
+    table {
+      font-variant-numeric: tabular-nums;
+    }
+
+    th {
+      letter-spacing: .01em;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fbfcfe;
+    }
+
+    tbody tr:hover {
+      background: #f0f6fd;
+    }
+
+    .match-modal {
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .match-modal-card {
+      border: 1px solid rgba(255,255,255,.7);
+      border-radius: 16px;
+    }
+
+    .detail-panel {
+      background: #fcfdff;
+    }
+
+    .goalboard {
+      padding: 10px;
+    }
+
+    @media (min-width: 769px) {
+      .jornadas-grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        gap: 18px;
+      }
+
+      .proximas-jornadas-grid {
+        max-width: 1040px;
+        gap: 22px;
+      }
+
+      .proximas-jornadas-grid > .round-panel {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      header {
+        margin-bottom: 16px;
+        border-radius: 0 0 12px 12px;
+      }
+
+      section {
+        padding: 17px;
+      }
+
+      .proximas-jornadas-grid {
+        gap: 15px;
+      }
+
+      .proximas-jornadas-grid > .round-panel {
+        padding: 15px 13px;
+      }
+
+      .next-match {
+        gap: 8px;
+      }
+
+      .next-score {
+        min-width: 66px;
+        padding: 7px 6px;
+      }
+
+      .jornadas-grid {
+        gap: 14px;
+      }
+    }
+
+    /* Clasificación en móvil: letra compacta y desplazamiento horizontal para ver todas las columnas */
+    @media (max-width: 600px) {
+      #tab-clasificacion .table-container {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x pan-y;
+      }
+      #tab-clasificacion table {
+        /* La tabla sigue siendo desplazable, pero las tres primeras columnas
+           quedan compactas para que Pos, Equipo y Pts se vean al entrar. */
+        width: 720px;
+        min-width: 720px;
+        table-layout: fixed;
+        font-size: .72rem;
+      }
+      #tab-clasificacion th,
+      #tab-clasificacion td {
+        padding: 8px 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      #tab-clasificacion th:nth-child(1),
+      #tab-clasificacion td:nth-child(1) { width: 48px; }
+      #tab-clasificacion th:nth-child(2),
+      #tab-clasificacion td:nth-child(2) {
+        width: 170px;
+        text-align: left;
+      }
+      #tab-clasificacion th:nth-child(3),
+      #tab-clasificacion td:nth-child(3) { width: 52px; }
+      #tab-clasificacion th:nth-child(n+4),
+      #tab-clasificacion td:nth-child(n+4) { width: 56px; }
+      #tab-clasificacion td.team-name {
+        overflow-wrap: normal;
+        word-break: normal;
+        font-size: .72rem;
+      }
+      #tab-clasificacion h2 { font-size: 1.22rem; }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 7px;
+      }
+
+      header {
+        padding: 22px 10px;
+        margin-bottom: 13px;
+      }
+
+      header h1 {
+        font-size: 1.55rem;
+      }
+
+      header p {
+        font-size: .88rem;
+      }
+
+      .tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 5px;
+        padding: 5px;
+        margin-bottom: 13px;
+        border-radius: 12px;
+      }
+
+      .tab-button {
+        min-height: 42px;
+        padding: 9px 5px;
+        font-size: .82rem;
+        border-radius: 8px;
+      }
+
+      section {
+        padding: 13px 10px;
+        border-radius: 12px;
+      }
+
+      h2 {
+        font-size: 1.22rem;
+        margin-bottom: 15px;
+      }
+
+      .subtitulo {
+        font-size: .86rem;
+      }
+
+      .jornada-card {
+        padding: 12px 9px;
+      }
+
+      .jornada-card h3 {
+        font-size: 1rem;
+      }
+
+      .jornada-card li {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        gap: 5px;
+        padding: 10px 0;
+        font-size: .76rem;
+      }
+
+      .score {
+        padding: 4px 6px;
+        font-size: .76rem;
+      }
+
+      .proximas-jornadas-grid > .round-panel {
+        padding: 14px 9px;
+        border-radius: 11px;
+      }
+
+      .proximas-jornadas-grid .next-round-title {
+        font-size: 1.08rem;
+        line-height: 1.3;
+      }
+
+      .proximas-jornadas-grid .next-round-description {
+        font-size: .82rem;
+      }
+
+      .proximas-jornadas-grid .next-match {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        gap: 5px;
+        font-size: .74rem;
+      }
+
+      .next-score {
+        min-width: 58px;
+        padding: 6px 4px;
+        font-size: .72rem;
+        overflow-wrap: anywhere;
+      }
+
+      .match-field {
+        font-size: .72rem;
+      }
+
+      .match-scoreline {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      }
+
+      .goalboard {
+        padding: 5px;
+      }
+
+      .goalboard-head {
+        grid-template-columns: minmax(0, 1fr) minmax(70px, .8fr) minmax(0, 1fr);
+        gap: 4px;
+      }
+
+      .goalboard-score {
+        font-size: 1.35rem;
+      }
+
+      .info-item {
+        padding: 7px 10px;
+        font-size: .78rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+      }
+    }
+
+  
+
+    /* ============================================================
+       ACTUALIDAD: RACHAS Y PESTAÑAS MÓVILES
+       ============================================================ */
     .actualidad-mobile-tabs { display: none; }
     .racha-panel { min-width: 0; }
     .actualidad-left-stack > .results-panel,
@@ -470,6 +1128,7 @@
     .racha-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
     .racha-empty { color: #718096; text-align: center; padding: 12px 4px; font-size: .9rem; }
 
+    /* Diseño de escritorio: resultados y rachas comparten la columna izquierda */
     @media (min-width: 769px) {
       .proximas-jornadas-grid {
         align-items: stretch;
@@ -545,6 +1204,10 @@
         overflow: auto;
         margin: 0 12px 12px;
       }
+      .proximas-jornadas-grid > .upcoming-panel {
+        height: 100%;
+        box-sizing: border-box;
+      }
     }
 
     @media (max-width: 768px) {
@@ -562,7 +1225,7 @@
       }
       .results-toggle .results-chevron { display: none; }
       .results-content { display: block !important; padding: 0; overflow: visible; }
-      .actualidad-mobile-tabs { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 4px; padding: 4px; margin: 0 0 14px; background: #edf2f7; border-radius: 10px; }
+      .actualidad-mobile-tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4px; padding: 4px; margin: 0 0 14px; background: #edf2f7; border-radius: 10px; }
       .actualidad-tab { min-width: 0; padding: 10px 3px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: #4a5568; font: inherit; font-size: .78rem; font-weight: 700; cursor: pointer; }
       .actualidad-tab.active { background: #fff; color: var(--secondary-color); border-color: #e2e8f0; box-shadow: 0 2px 5px rgba(0,0,0,.06); }
       #proxima-jornada-contenido .proximas-jornadas-grid { grid-template-columns: minmax(0,1fr); }
@@ -575,7 +1238,85 @@
       #proxima-jornada-contenido .racha-panel { grid-column: 1 / -1; }
       #proxima-jornada-contenido[data-mobile-view="rachas"] .racha-toggle { display: none; }
       #proxima-jornada-contenido[data-mobile-view="rachas"] .racha-content { display: block; margin-top: 0; }
+      .racha-toggle { padding: 14px 12px; }
+      .racha-content { padding: 13px 11px; }
+      .racha-team { grid-template-columns: minmax(0,1fr); gap: 7px; }
+      .racha-results { gap: 6px; }
+      .racha-result { width: 30px; height: 30px; }
     }
+    @media (min-width: 769px) {
+      .actualidad-mobile-tabs { display: none !important; }
+    }
+
+  
+    /* Encabezado unificado: título azul y descripción dentro del recuadro blanco */
+    header {
+      margin-bottom: 22px;
+      padding: clamp(22px, 3vw, 32px) 20px;
+      border-radius: 14px;
+    }
+
+    .seo-intro {
+      width: 100%;
+      max-width: 1210px;
+      margin: 22px auto 0;
+      padding: 18px 24px;
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text-color);
+      text-align: left;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .seo-intro h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.15rem, 2.2vw, 1.65rem);
+      line-height: 1.25;
+    }
+
+    .seo-intro p {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    .seo-intro .last-update {
+    margin-top: 12px;
+    font-size: 0.82rem;
+    color: #758398;
+    line-height: 1.4;
+    }
+
+
+
+    
+    @media (max-width: 600px) {
+      header {
+        margin-bottom: 14px;
+        padding: 19px 12px;
+      }
+
+      header h1 {
+        font-size: 1.55rem;
+      }
+
+      .seo-intro {
+        margin-top: 16px;
+        padding: 13px 14px;
+        border-radius: 10px;
+      }
+
+      .seo-intro h2 {
+        font-size: 1.08rem;
+        line-height: 1.3;
+        margin-bottom: 7px;
+      }
+
+      .seo-intro p {
+        font-size: 0.88rem;
+        line-height: 1.45;
+      }
+    }
+
   </style>
 </head>
 
@@ -584,10 +1325,11 @@
   <header>
     <h1>🏆 LIGA CERVANTES 🏆</h1>
 
+    <!-- Texto descriptivo visible para usuarios y buscadores -->
     <section class="seo-intro" aria-labelledby="seo-intro-title">
       <h2 id="seo-intro-title">Clasificación y resultados temporada 2026-27</h2>
       <p>
-        Consulta la clasificación, los resultados, los horarios y sigue todas las jornadas de la competición.
+        Consulta la clasificación, los resultados, los horarios y los goleadores. Sigue todas las jornadas y la actualidad de la competición.
       </p>
       <p class="last-update" id="last-update">
         Última actualización: pendiente
@@ -597,14 +1339,22 @@
 
   <main>
 
+    <!-- CARGANDO -->
     <div id="loading">
       Cargando datos del torneo...
     </div>
 
+    <!-- ERROR -->
     <div id="error"></div>
 
+    <!-- CONTENIDO PRINCIPAL -->
     <div id="contenido" style="display: none;">
 
+ <!-- INFORMACIÓN RESUMIDA -->
+         
+
+
+      <!-- PESTAÑAS -->
       <div class="tabs">
 
         <button
@@ -628,7 +1378,19 @@
           Actualidad
         </button>
 
+        <button
+          type="button"
+          class="tab-button"
+          data-tab="goleadores">
+          Goleadores
+        </button>
+
       </div>
+
+
+      <!-- ==========================================
+           PESTAÑA CLASIFICACIÓN
+           ========================================== -->
 
       <div
         id="tab-clasificacion"
@@ -664,6 +1426,7 @@
               </thead>
 
               <tbody id="body-clasificacion">
+                <!-- Se genera con JavaScript -->
               </tbody>
 
             </table>
@@ -673,6 +1436,11 @@
         </section>
 
       </div>
+
+
+      <!-- ==========================================
+           PESTAÑA JORNADAS
+           ========================================== -->
 
       <div
         id="tab-jornadas"
@@ -695,6 +1463,11 @@
 
       </div>
 
+
+      <!-- ==========================================
+           PESTAÑA PRÓXIMA JORNADA
+           ========================================== -->
+
       <div
         id="tab-proxima"
         class="tab-content">
@@ -709,16 +1482,27 @@
           <div
             id="proxima-jornada-contenido"
             data-mobile-view="resultados">
+            <!-- Se genera con JavaScript -->
           </div>
 
         </section>
 
       </div>
 
+      <!-- PESTAÑA GOLEADORES -->
+      <div id="tab-goleadores" class="tab-content">
+        <section>
+          <h2>Máximos goleadores</h2>
+          
+          <div id="goleadores-contenido" class="empty-state">Error para mostrar esta clasificación.</div>
+        </section>
+      </div>
+
     </div>
 
   </main>
 
+  <!-- Ficha emergente del partido -->
   <div id="match-modal" class="match-modal" role="dialog" aria-modal="true" aria-labelledby="match-modal-title">
     <div class="match-modal-card">
       <button type="button" id="match-modal-close" class="modal-close" aria-label="Cerrar ficha">✕</button>
@@ -729,22 +1513,1676 @@
 
   <script>
 
+    
+    // ============================================================
+    // CONFIGURACIÓN
+    // ============================================================
+
     const SHEET_CSV_URL =
       'https://docs.google.com/spreadsheets/d/e/2PACX-1vTnB4t1kN7IDlmugRW2R7HNMNU-XCfdHlU3OWZifnjtto7A4l5zctDevB8mweRuGf2_F4iXwucexThV/pub?output=csv';
 
+    // La pestaña Detalles de tu Google Sheets (gid confirmado por el enlace).
+    // La hoja debe estar compartida para que cualquiera con el enlace pueda verla.
+    const DETALLES_CSV_URL = 'https://docs.google.com/spreadsheets/d/14RLnRzjuY_ThpeJr3-cqWU6-HGyz86MV8NN1EqwEDL4/gviz/tq?tqx=out:csv&sheet=Detalles';
+    // Los goleadores se calculan automáticamente a partir de las filas con Tipo = Gol.
+    const GOLEADORES_CSV_URL = '';
+    let goleadoresGlobal = [];
+    let detallesGlobal = [];
+
+
+    // ============================================================
+    // VARIABLES
+    // ============================================================
+
     let partidosGlobal = [];
 
+
+    // ============================================================
+    // INICIO
+    // ============================================================
+
     document.addEventListener('DOMContentLoaded', () => {
+
       configurarPestanas();
+
       cargarDatos();
+
     });
 
+
+    // ============================================================
+    // CONFIGURAR PESTAÑAS
+    // ============================================================
+
     function configurarPestanas() {
-      const botones = document.querySelectorAll('.tab-button');
+
+      const botones =
+        document.querySelectorAll('.tab-button');
+
       botones.forEach(boton => {
+
         boton.addEventListener('click', () => {
-          const tab = boton.dataset.tab;
-          botones.forEach(btn => btn.classList.remove('active'));
+
+          const tab =
+            boton.dataset.tab;
+
+
+          // Quitar activo de botones
+          botones.forEach(btn => {
+            btn.classList.remove('active');
+          });
+
+
+          // Activar botón seleccionado
           boton.classList.add('active');
-          document.querySelectorAll('.tab-content').forEach(contenido => contenido.classList.remove('active'));
+
+
+          // Ocultar todos los contenidos
+          document
+            .querySelectorAll('.tab-content')
+            .forEach(contenido => {
+              contenido.classList.remove('active');
+            });
+
+
+          // Mostrar contenido correspondiente
           const contenido =
+            document.getElementById('tab-' + tab);
+
+          if (contenido) {
+            contenido.classList.add('active');
+          }
+
+        });
+
+      });
+
+    }
+
+
+    // ============================================================
+    // CARGAR DATOS
+    // ============================================================
+
+    function cargarDatos() {
+
+      // Evita que la web se quede bloqueada si Papa Parse no se ha cargado.
+      if (typeof Papa === 'undefined' || typeof Papa.parse !== 'function') {
+        console.error('Papa Parse no está disponible; se ha intentado cargar desde el CDN alternativo.');
+        mostrarError(
+          'No se ha podido cargar la librería necesaria para leer los datos. Recarga la página dentro de unos instantes.'
+        );
+        return;
+      }
+
+      /*
+       * Añadimos un parámetro de tiempo para evitar que el navegador
+       * conserve una versión antigua del CSV.
+       */
+
+      const url =
+        SHEET_CSV_URL +
+        '&_=' +
+        Date.now();
+
+
+      Papa.parse(url, {
+
+        download: true,
+
+        header: true,
+
+        skipEmptyLines: true,
+
+        complete: function(results) {
+
+          if (
+            !results.data ||
+            results.data.length === 0
+          ) {
+
+            mostrarError(
+              'No se han encontrado datos en el Google Sheet.'
+            );
+
+            return;
+          }
+
+
+          try {
+
+            partidosGlobal = results.data;
+
+            procesarDatos(partidosGlobal);
+            cargarDatosComplementarios();
+
+
+            document
+              .getElementById('loading')
+              .style.display = 'none';
+
+            document
+              .getElementById('contenido')
+              .style.display = 'block';
+
+          } catch (error) {
+
+            console.error(
+              'Error procesando los datos:',
+              error
+            );
+
+            mostrarError(
+              'Los datos se han cargado, pero no se han podido procesar correctamente.'
+            );
+
+          }
+
+        },
+
+        error: function(error) {
+
+          console.error(
+            'Error cargando',
+            error
+          );
+
+          mostrarError(
+            'No se han podido cargar los datos. Estamos solucionando el problema.'
+          );
+
+        }
+
+      });
+
+    }
+
+
+    // ============================================================
+    // MOSTRAR ERROR
+    // ============================================================
+
+    function mostrarError(mensaje) {
+
+      document
+        .getElementById('loading')
+        .style.display = 'none';
+
+
+      const error =
+        document.getElementById('error');
+
+
+      error.textContent = mensaje;
+
+      error.style.display = 'block';
+
+    }
+
+
+    // ============================================================
+    // PROCESAR DATOS
+    // ============================================================
+
+    function procesarDatos(partidos) {
+
+      const equipos = {};
+
+
+      partidos.forEach(partido => {
+
+        const local =
+          obtenerTexto(
+            partido['Equipo Local']
+          );
+
+        const visitante =
+          obtenerTexto(
+            partido['Equipo Visitante']
+          );
+
+
+        if (!local || !visitante) {
+          return;
+        }
+
+
+        // Crear equipos
+        [local, visitante].forEach(nombre => {
+
+          if (!equipos[nombre]) {
+
+            equipos[nombre] = {
+
+              nombre: nombre,
+
+              pj: 0,
+
+              pg: 0,
+
+              pe: 0,
+
+              pp: 0,
+
+              gf: 0,
+
+              gc: 0,
+
+              pts: 0
+
+            };
+
+          }
+
+        });
+
+
+        const golesLocal =
+          convertirGoles(
+            partido['Goles Local']
+          );
+
+        const golesVisitante =
+          convertirGoles(
+            partido['Goles Visitante']
+          );
+
+
+        // Solo contabilizar partidos jugados
+        if (
+          golesLocal !== null &&
+          golesVisitante !== null
+        ) {
+
+          equipos[local].pj++;
+
+          equipos[visitante].pj++;
+
+
+          equipos[local].gf += golesLocal;
+
+          equipos[local].gc += golesVisitante;
+
+
+          equipos[visitante].gf += golesVisitante;
+
+          equipos[visitante].gc += golesLocal;
+
+
+          // Victoria local
+          if (golesLocal > golesVisitante) {
+
+            equipos[local].pg++;
+
+            equipos[local].pts += 3;
+
+            equipos[visitante].pp++;
+
+          }
+
+          // Victoria visitante
+          else if (
+            golesLocal < golesVisitante
+          ) {
+
+            equipos[visitante].pg++;
+
+            equipos[visitante].pts += 3;
+
+            equipos[local].pp++;
+
+          }
+
+          // Empate
+          else {
+
+            equipos[local].pe++;
+
+            equipos[visitante].pe++;
+
+            equipos[local].pts++;
+
+            equipos[visitante].pts++;
+
+          }
+
+        }
+
+      });
+
+
+      // Convertir a array
+      const clasificacion =
+        Object.values(equipos);
+
+
+      // Ordenar clasificación
+      clasificacion.sort((a, b) => {
+
+        const dgA =
+          a.gf - a.gc;
+
+        const dgB =
+          b.gf - b.gc;
+
+
+        // 1. Puntos
+        if (b.pts !== a.pts) {
+          return b.pts - a.pts;
+        }
+
+
+        // 2. Diferencia de goles
+        if (dgB !== dgA) {
+          return dgB - dgA;
+        }
+
+
+        // 3. Goles a favor
+        if (b.gf !== a.gf) {
+          return b.gf - a.gf;
+        }
+
+
+        // 4. Nombre
+        return a.nombre.localeCompare(
+          b.nombre,
+          'es'
+        );
+
+      });
+
+
+      renderizarClasificacion(
+        clasificacion
+      );
+
+
+      renderizarJornadas(
+        partidos
+      );
+
+
+      renderizarProximaJornada(
+        partidos
+      );
+
+
+      
+
+    }
+
+
+    // ============================================================
+    // RESUMEN
+    // ============================================================
+
+
+    // ============================================================
+    // RENDERIZAR CLASIFICACIÓN
+    // ============================================================
+
+    function renderizarClasificacion(
+      tabla
+    ) {
+
+      const tbody =
+        document.getElementById(
+          'body-clasificacion'
+        );
+
+
+      tbody.innerHTML = '';
+
+
+      tabla.forEach(
+        (equipo, index) => {
+
+          const dg =
+            equipo.gf - equipo.gc;
+
+
+          const tr =
+            document.createElement('tr');
+
+
+          tr.innerHTML = `
+
+            <td class="position">
+              ${index + 1}
+            </td>
+
+            <td class="team-name">
+              ${escaparHTML(equipo.nombre)}
+            </td>
+
+            <td class="points">
+              <strong>
+                ${equipo.pts}
+              </strong>
+            </td>
+
+            <td>
+              ${equipo.pj}
+            </td>
+
+            <td>
+              ${equipo.pg}
+            </td>
+
+            <td>
+              ${equipo.pe}
+            </td>
+
+            <td>
+              ${equipo.pp}
+            </td>
+
+            <td>
+              ${equipo.gf}
+            </td>
+
+            <td>
+              ${equipo.gc}
+            </td>
+
+            <td>
+              ${dg > 0 ? '+' + dg : dg}
+            </td>
+
+          `;
+
+
+          tbody.appendChild(tr);
+
+        }
+      );
+
+    }
+
+
+    // ============================================================
+    // AGRUPAR JORNADAS
+    // ============================================================
+
+    function agruparJornadas(partidos) {
+
+      const jornadas = {};
+
+
+      partidos.forEach(partido => {
+
+        const jornada =
+          obtenerTexto(
+            partido['Jornada']
+          );
+
+        const local =
+          obtenerTexto(
+            partido['Equipo Local']
+          );
+
+        const visitante =
+          obtenerTexto(
+            partido['Equipo Visitante']
+          );
+
+
+        if (
+          !jornada ||
+          !local ||
+          !visitante
+        ) {
+          return;
+        }
+
+
+        if (!jornadas[jornada]) {
+          jornadas[jornada] = [];
+        }
+
+
+        jornadas[jornada].push(
+          partido
+        );
+
+      });
+
+
+      return jornadas;
+
+    }
+
+
+    // ============================================================
+    // RENDERIZAR TODAS LAS JORNADAS
+    // ============================================================
+
+    function renderizarJornadas(
+      partidos
+    ) {
+
+      const contenedor =
+        document.getElementById(
+          'contenedor-jornadas'
+        );
+
+
+      contenedor.innerHTML = '';
+
+
+      const jornadas =
+        agruparJornadas(partidos);
+
+
+      const jornadasOrdenadas =
+        Object.keys(jornadas)
+          .sort(ordenarJornadas);
+
+
+      jornadasOrdenadas.forEach(
+        jornadaKey => {
+
+          const divJornada =
+            document.createElement('div');
+
+
+          divJornada.className =
+            'jornada-card';
+
+
+          const titulo =
+            document.createElement('h3');
+
+
+          titulo.textContent =
+            jornadaKey;
+
+
+          const ul =
+            document.createElement('ul');
+
+
+          jornadas[jornadaKey].forEach(
+            partido => {
+
+              const local =
+                obtenerTexto(
+                  partido['Equipo Local']
+                );
+
+              const visitante =
+                obtenerTexto(
+                  partido['Equipo Visitante']
+                );
+
+
+              const golesLocal =
+                convertirGoles(
+                  partido['Goles Local']
+                );
+
+              const golesVisitante =
+                convertirGoles(
+                  partido['Goles Visitante']
+                );
+              const horario =
+                obtenerTexto(partido['Horario']);
+
+              
+
+    const campo =
+      obtenerTexto(
+        partido['Campo']
+      );
+
+const aplazado =
+                obtenerTexto(partido['Estado']).toLowerCase() === 'aplazado';
+
+              const jugado =
+                golesLocal !== null &&
+                golesVisitante !== null;
+
+              // Un partido aplazado se identifica por la columna Estado.
+              const marcador = aplazado
+                ? 'Aplazado'
+                : jugado
+                  ? `${golesLocal} - ${golesVisitante}`
+                  : horario
+                    ? formatearHorario(horario)
+                    : 'Pendiente';
+const li =
+                document.createElement('li');
+
+
+              li.classList.add('match-clickable');
+              li.setAttribute('role', 'button');
+              li.setAttribute('tabindex', '0');
+              li.setAttribute('aria-label', `Ver ficha de ${local} contra ${visitante}`);
+              li.innerHTML = `
+
+                <span class="team-home">
+                  ${escaparHTML(local)}
+                </span>
+
+                <span class="score ${
+                  aplazado || (!jugado )
+                    ? 'pending'
+                    : ''
+                }">
+                  ${marcador}
+                </span>
+
+                <span class="team-away">
+                  ${escaparHTML(visitante)}
+                </span>
+
+              `;
+
+
+              ul.appendChild(li);
+
+            }
+          );
+
+
+          divJornada.appendChild(
+            titulo
+          );
+
+          divJornada.appendChild(
+            ul
+          );
+
+
+          contenedor.appendChild(
+            divJornada
+          );
+
+        }
+      );
+
+    }
+
+
+    // ============================================================
+    // PRÓXIMA JORNADA
+    // ============================================================
+
+
+
+function renderizarProximaJornada(partidos) {
+
+  const contenedor =
+    document.getElementById(
+      'proxima-jornada-contenido'
+    );
+
+  contenedor.innerHTML = '';
+
+  const grid =
+  document.createElement('div');
+
+grid.className =
+  'proximas-jornadas-grid';
+
+contenedor.appendChild(grid);
+
+// En ordenador, resultados y rachas comparten una columna izquierda.
+// En móvil, CSS aplana este contenedor para conservar las tres pestañas.
+const columnaIzquierda = document.createElement('div');
+columnaIzquierda.className = 'actualidad-left-stack';
+grid.appendChild(columnaIzquierda);
+
+  
+  const jornadas =
+    agruparJornadas(partidos);
+
+  const jornadasOrdenadas =
+    Object.keys(jornadas)
+      .sort(ordenarJornadas);
+
+
+  // ==========================================================
+  // BUSCAR ÚLTIMA JORNADA COMPLETAMENTE JUGADA
+  // ==========================================================
+
+  let ultimaJornada = null;
+
+  jornadasOrdenadas.forEach(jornada => {
+
+    const partidosJornada =
+      jornadas[jornada];
+
+    const todosJugados =
+      partidosJornada.length > 0 &&
+      partidosJornada.every(partido => {
+
+        const gl =
+          convertirGoles(
+            partido['Goles Local']
+          );
+
+        const gv =
+          convertirGoles(
+            partido['Goles Visitante']
+          );
+
+        const aplazado =
+          obtenerTexto(partido['Estado']).toLowerCase() === 'aplazado';
+
+        return aplazado || (
+          gl !== null &&
+          gv !== null
+        );
+
+      });
+
+    if (todosJugados) {
+
+      ultimaJornada = jornada;
+
+    }
+
+  });
+
+
+  // ==========================================================
+  // BUSCAR SIGUIENTE JORNADA
+  // ==========================================================
+
+  let siguienteJornada = null;
+
+  for (
+    const jornada of jornadasOrdenadas
+  ) {
+
+    const partidosJornada =
+      jornadas[jornada];
+
+    const hayPartidosSinJugar =
+      partidosJornada.some(partido => {
+
+        const gl =
+          convertirGoles(
+            partido['Goles Local']
+          );
+
+        const gv =
+          convertirGoles(
+            partido['Goles Visitante']
+          );
+
+        const aplazado =
+          obtenerTexto(partido['Estado']).toLowerCase() === 'aplazado';
+
+        return !aplazado && (
+          gl === null ||
+          gv === null
+        );
+
+      });
+
+    if (hayPartidosSinJugar) {
+
+      siguienteJornada = jornada;
+
+      break;
+
+    }
+
+  }
+
+
+  // ==========================================================
+  // MOSTRAR ÚLTIMA JORNADA JUGADA
+  // ==========================================================
+
+  if (ultimaJornada) {
+
+    const bloqueUltima =
+      document.createElement('div');
+
+    bloqueUltima.className = 'round-panel results-panel';
+
+    bloqueUltima.classList.add('is-expanded');
+    bloqueUltima.innerHTML = `
+      <button type="button" class="results-toggle" aria-expanded="true">
+        <span class="next-round-header">
+          <span class="next-round-title">✅ </span>
+          <span class="next-round-description">${escaparHTML(ultimaJornada)}</span>
+        </span>
+        <span class="results-chevron" aria-hidden="true">⌄</span>
+      </button>
+      <div class="results-content"></div>
+    `;
+
+    columnaIzquierda.appendChild(bloqueUltima);
+
+    const contenidoResultados = bloqueUltima.querySelector('.results-content');
+    const partidosUltima = crearListaPartidos(jornadas[ultimaJornada]);
+    contenidoResultados.appendChild(partidosUltima);
+
+    bloqueUltima.querySelector('.results-toggle').addEventListener('click', () => {
+      // Siempre queda abierto uno de los dos paneles de la izquierda.
+      bloqueUltima.classList.add('is-expanded');
+      bloqueUltima.querySelector('.results-toggle').setAttribute('aria-expanded', 'true');
+      panelRacha.classList.remove('open');
+      botonRacha.setAttribute('aria-expanded', 'false');
+      contenidoRacha.hidden = true;
+    });
+
+  }
+
+
+  // ==========================================================
+  // MOSTRAR SIGUIENTE JORNADA
+  // ==========================================================
+
+  if (siguienteJornada) {
+
+    const bloqueSiguiente =
+      document.createElement('div');
+
+    bloqueSiguiente.className = 'round-panel upcoming-panel';
+
+    bloqueSiguiente.innerHTML = `
+
+      <div class="next-round-header">
+
+        <div class="next-round-title">
+          📅 Próximos partidos
+        </div>
+
+        <div class="next-round-description">
+          ${escaparHTML(siguienteJornada)}
+        </div>
+
+      </div>
+
+    `;
+
+    grid.appendChild(
+      bloqueSiguiente
+    );
+
+
+    const partidosSiguiente =
+      crearListaPartidos(
+        jornadas[siguienteJornada],
+        true
+      );
+
+    bloqueSiguiente.appendChild(
+      partidosSiguiente
+    );
+
+  }
+
+
+  // Racha de los equipos: se calcula con los resultados ya cargados.
+  const panelRacha = document.createElement('div');
+  panelRacha.className = 'racha-panel';
+  const numeroJornadaRacha = extraerNumero(ultimaJornada || siguienteJornada || '');
+  const etiquetaJornadaRacha = numeroJornadaRacha !== null ? `J${numeroJornadaRacha}` : '';
+  panelRacha.innerHTML = `
+    <button type="button" class="racha-toggle" aria-expanded="false">
+      <span>🔥 Racha de partidos${etiquetaJornadaRacha ? ` <span class="racha-round-label">${etiquetaJornadaRacha}</span>` : ''}</span>
+      <span class="racha-chevron" aria-hidden="true">⌄</span>
+    </button>
+    <div class="racha-content" hidden></div>
+  `;
+  const botonRacha = panelRacha.querySelector('.racha-toggle');
+  const contenidoRacha = panelRacha.querySelector('.racha-content');
+  botonRacha.addEventListener('click', () => {
+    panelRacha.classList.add('open');
+    botonRacha.setAttribute('aria-expanded', 'true');
+    contenidoRacha.hidden = false;
+    if (!contenidoRacha.dataset.renderizado) {
+      contenidoRacha.innerHTML = renderizarRachas(partidos);
+      contenidoRacha.dataset.renderizado = 'true';
+    }
+    const panelResultados = columnaIzquierda.querySelector('.results-panel');
+    if (panelResultados) {
+      panelResultados.classList.remove('is-expanded');
+      panelResultados.querySelector('.results-toggle')?.setAttribute('aria-expanded', 'false');
+    }
+  });
+  columnaIzquierda.appendChild(panelRacha);
+
+  // En móvil, las tres secciones se seleccionan mediante pestañas.
+  configurarPestanasActualidad();
+
+  // ==========================================================
+  // SI TODO EL TORNEO ESTÁ TERMINADO
+  // ==========================================================
+
+  if (
+    !ultimaJornada &&
+    !siguienteJornada
+  ) {
+
+    contenedor.innerHTML = `
+
+      <div class="all-finished">
+
+        <div class="icon">
+          🏆
+        </div>
+
+        <h2>
+          ¡Todas las jornadas completadas!
+        </h2>
+
+        <p>
+          No hay partidos pendientes en el torneo.
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+// ============================================================
+// PESTAÑAS MÓVILES DE ACTUALIDAD Y RACHA DE EQUIPOS
+// ============================================================
+function configurarPestanasActualidad() {
+  const contenedor = document.getElementById('proxima-jornada-contenido');
+  if (!contenedor || contenedor.dataset.tabsConfiguradas === 'true') return;
+  contenedor.dataset.tabsConfiguradas = 'true';
+  document.querySelectorAll('.actualidad-tab').forEach(boton => {
+    boton.addEventListener('click', () => {
+      const vista = boton.dataset.actualidad;
+      contenedor.dataset.mobileView = vista;
+      document.querySelectorAll('.actualidad-tab').forEach(otro => {
+        const activo = otro === boton;
+        otro.classList.toggle('active', activo);
+        otro.setAttribute('aria-selected', String(activo));
+      });
+      if (vista === 'rachas') {
+        const panel = contenedor.querySelector('.racha-panel');
+        const contenido = panel?.querySelector('.racha-content');
+        if (panel && contenido) {
+          panel.classList.add('open');
+          contenido.hidden = false;
+          panel.querySelector('.racha-toggle')?.setAttribute('aria-expanded', 'true');
+          if (!contenido.dataset.renderizado) {
+            contenido.innerHTML = renderizarRachas(partidosGlobal);
+            contenido.dataset.renderizado = 'true';
+          }
+        }
+      }
+    });
+  });
+}
+
+function renderizarRachas(partidos) {
+  const porEquipo = new Map();
+  // Registrar todos los equipos, incluso si todavía no han disputado un partido.
+  (partidos || []).forEach(partido => {
+    const local = obtenerTexto(partido['Equipo Local']);
+    const visitante = obtenerTexto(partido['Equipo Visitante']);
+    if (local && !porEquipo.has(local)) porEquipo.set(local, []);
+    if (visitante && !porEquipo.has(visitante)) porEquipo.set(visitante, []);
+  });
+
+  (partidos || []).forEach((partido, indice) => {
+    const local = obtenerTexto(partido['Equipo Local']);
+    const visitante = obtenerTexto(partido['Equipo Visitante']);
+    const gl = convertirGoles(partido['Goles Local']);
+    const gv = convertirGoles(partido['Goles Visitante']);
+    const estado = obtenerTexto(partido['Estado']).toLocaleLowerCase('es');
+    // Los aplazados y los encuentros sin resultado no cuentan como jugados.
+    if (!local || !visitante || estado === 'aplazado' || gl === null || gv === null) return;
+    const jornadaTexto = obtenerTexto(partido['Jornada']);
+    const jornadaNum = extraerNumero(jornadaTexto);
+    const agregar = (equipo, resultado) => {
+      porEquipo.get(equipo).push({ resultado, jornadaNum: jornadaNum === null ? -1 : jornadaNum, indice });
+    };
+    agregar(local, gl > gv ? 'V' : gl === gv ? 'E' : 'D');
+    agregar(visitante, gv > gl ? 'V' : gv === gl ? 'E' : 'D');
+  });
+
+  // Respetar el orden real de la clasificación visible, no ordenar por los puntos de la racha.
+  const normalizarNombreEquipo = nombre => String(nombre || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLocaleLowerCase('es');
+  const ordenClasificacion = new Map();
+  document.querySelectorAll('#body-clasificacion tr').forEach((fila, indice) => {
+    const celdaNombre = fila.querySelector('td.team-name') || fila.cells?.[1];
+    const nombre = celdaNombre?.textContent?.trim();
+    if (nombre) ordenClasificacion.set(normalizarNombreEquipo(nombre), indice);
+  });
+
+  const lista = [...porEquipo.entries()].map(([nombre, partidosEquipo]) => {
+    partidosEquipo.sort((a,b) => a.jornadaNum - b.jornadaNum || a.indice - b.indice);
+    const ultimos = partidosEquipo.slice(-5);
+    const puntos = ultimos.reduce((total, p) => total + (p.resultado === 'V' ? 3 : p.resultado === 'E' ? 1 : 0), 0);
+    return { nombre, ultimos, puntos, jugados: ultimos.length, victorias: ultimos.filter(p => p.resultado === 'V').length };
+  }).sort((a,b) => {
+    const posA = ordenClasificacion.get(normalizarNombreEquipo(a.nombre));
+    const posB = ordenClasificacion.get(normalizarNombreEquipo(b.nombre));
+    if (posA !== undefined && posB !== undefined) return posA - posB;
+    if (posA !== undefined) return -1;
+    if (posB !== undefined) return 1;
+    return a.nombre.localeCompare(b.nombre, 'es');
+  });
+
+  if (!lista.length) return '<p class="racha-empty">Todavía no hay equipos para mostrar las rachas.</p>';
+  const filas = lista.map(equipo => {
+    const huecos = Math.max(0, 5 - equipo.ultimos.length);
+    const casillas = Array.from({length: huecos}, () => '<span class="racha-result pending" title="Partido pendiente o todavía no disputado" aria-label="Partido pendiente">–</span>').join('');
+    const resultados = equipo.ultimos.map(p => `<span class="racha-result ${p.resultado.toLocaleLowerCase('es')}" title="${p.resultado === 'V' ? 'Victoria' : p.resultado === 'E' ? 'Empate' : 'Derrota'}">${p.resultado}</span>`).join('');
+    return `
+    <div class="racha-team">
+      <div class="racha-team-name">${escaparHTML(equipo.nombre)}</div>
+      <div class="racha-results" aria-label="Últimos ${equipo.jugados} partidos">${casillas}${resultados}<span class="racha-points">${equipo.puntos} pts</span></div>
+    </div>`;
+  }).join('');
+  return `<div class="racha-list">${filas}</div><div class="racha-legend"><span><i style="background:#dcfce7"></i>Victoria</span><span><i style="background:#fef3c7"></i>Empate</span><span><i style="background:#fee2e2"></i>Derrota</span><span><i style="background:#e2e8f0"></i>Pendiente</span></div><p class="match-hint">Se muestran los últimos cinco partidos disputados de cada equipo; los aplazados y pendientes no cuentan.</p>`;
+}
+
+// ============================================================
+// CREAR LISTA DE PARTIDOS
+// ============================================================
+
+function crearListaPartidos(partidos, mostrarCampo = false) {
+
+  const container =
+    document.createElement('div');
+
+  container.className =
+    'next-matches';
+
+
+  partidos.forEach(partido => {
+
+    const local =
+      obtenerTexto(
+        partido['Equipo Local']
+      );
+
+    const visitante =
+      obtenerTexto(
+        partido['Equipo Visitante']
+      );
+
+
+    const golesLocal =
+      convertirGoles(
+        partido['Goles Local']
+      );
+
+    const golesVisitante =
+      convertirGoles(
+        partido['Goles Visitante']
+      );
+
+
+    const horario =
+      obtenerTexto(
+        partido['Horario']
+      );
+
+    const campo =
+      obtenerTexto(
+        partido['Campo']
+      );
+
+    const aplazado =
+      obtenerTexto(partido['Estado']).toLowerCase() === 'aplazado';
+
+    const jugado =
+      golesLocal !== null &&
+      golesVisitante !== null;
+
+
+    let marcador;
+
+
+    // ========================================================
+    // PARTIDO YA JUGADO
+    // ========================================================
+
+    if (aplazado) {
+
+      marcador = 'Aplazado';
+
+    }
+
+    else if (jugado) {
+
+      marcador =
+        `${golesLocal} - ${golesVisitante}`;
+
+    }
+
+
+    // ========================================================
+    // PARTIDO SIN RESULTADO PERO CON HORARIO
+    // ========================================================
+
+    else if (horario) {
+
+      marcador =
+        formatearHorario(horario);
+
+    }
+
+
+    // ========================================================
+    // PARTIDO SIN RESULTADO Y SIN HORARIO
+    // ========================================================
+
+    else {
+
+      marcador =
+        'Pendiente';
+
+    }
+
+
+    const partidoDiv =
+      document.createElement('div');
+
+    partidoDiv.className =
+      'next-match-item match-clickable';
+    partidoDiv.setAttribute('role', 'button');
+    partidoDiv.setAttribute('tabindex', '0');
+    partidoDiv.setAttribute('aria-label', `Ver ficha de ${local} contra ${visitante}`);
+
+    partidoDiv.innerHTML = `
+
+      <div class="next-match">
+
+        <span class="next-team-home">
+          ${escaparHTML(local)}
+        </span>
+
+        <span class="next-score ${
+          aplazado || !jugado
+            ? 'pending'
+            : ''
+        }">
+          ${escaparHTML(marcador)}
+        </span>
+
+        <span class="next-team-away">
+          ${escaparHTML(visitante)}
+        </span>
+
+      </div>
+
+      ${
+        mostrarCampo && campo
+          ? `<div class="match-field"> ${escaparHTML(campo)}</div>`
+          : ''
+      }
+
+    `;
+
+    container.appendChild(
+      partidoDiv
+    );
+
+  });
+
+
+  return container;
+
+}
+
+
+
+// ============================================================
+// DATOS COMPLEMENTARIOS: GOLEADORES Y DETALLES DE PARTIDOS
+// ============================================================
+function cargarDatosComplementarios() {
+  if (GOLEADORES_CSV_URL.trim()) {
+    Papa.parse(GOLEADORES_CSV_URL + (GOLEADORES_CSV_URL.includes('?') ? '&' : '?') + '_=' + Date.now(), {
+      download: true, header: true, skipEmptyLines: true,
+      complete: results => {
+        goleadoresGlobal = Array.isArray(results.data) ? results.data : [];
+        renderizarGoleadores();
+      },
+      error: err => console.warn('No se pudieron cargar los goleadores:', err)
+    });
+  }
+  if (DETALLES_CSV_URL.trim()) {
+    Papa.parse(DETALLES_CSV_URL + (DETALLES_CSV_URL.includes('?') ? '&' : '?') + '_=' + Date.now(), {
+      download: true, header: true, skipEmptyLines: true,
+      complete: results => {
+        detallesGlobal = Array.isArray(results.data) ? results.data : [];
+        goleadoresGlobal = detallesGlobal.filter(f => valorFila(f, 'Tipo').trim().toLocaleLowerCase('es') === 'gol');
+        renderizarGoleadores();
+      },
+      error: err => console.warn('No se pudieron cargar los detalles:', err)
+    });
+  }
+}
+
+function valorFila(fila, ...claves) {
+  for (const clave of claves) {
+    const encontrada = Object.keys(fila || {}).find(k => k.trim().toLowerCase() === clave.toLowerCase());
+    if (encontrada && String(fila[encontrada] ?? '').trim() !== '') return String(fila[encontrada]).trim();
+  }
+  return '';
+}
+
+function renderizarGoleadores() {
+  const cont = document.getElementById('goleadores-contenido');
+  if (!cont) return;
+  if (!goleadoresGlobal.length) {
+    cont.className = 'empty-state';
+    cont.textContent = 'Aún no hay goles registrados.';
+    return;
+  }
+  const acumulado = new Map();
+  goleadoresGlobal.forEach(f => {
+    const jugador = valorFila(f, 'Jugador', 'Nombre jugador', 'Nombre');
+    const equipo = valorFila(f, 'Equipo', 'Equipo del jugador');
+    const goles = Number(valorFila(f, 'Goles', 'Cantidad') || 1);
+    if (!jugador || !Number.isFinite(goles)) return;
+    const key = jugador.toLocaleLowerCase('es') + '|' + equipo.toLocaleLowerCase('es');
+    const actual = acumulado.get(key) || { jugador, equipo, goles: 0 };
+    actual.goles += goles;
+    acumulado.set(key, actual);
+  });
+  const lista = [...acumulado.values()].sort((a,b) => b.goles-a.goles || a.jugador.localeCompare(b.jugador,'es'));
+  if (!lista.length) { cont.className='empty-state'; cont.textContent='No se encontraron filas válidas.'; return; }
+  cont.className = 'table-container';
+  cont.innerHTML = `<table class="scorers-table"><thead><tr><th>Pos.</th><th style="text-align:left">Jugador</th><th style="text-align:left">Equipo</th><th>Goles</th></tr></thead><tbody>${lista.map((j,i)=>`<tr><td>${i+1}</td><td style="text-align:left;font-weight:600">${escaparHTML(j.jugador)}</td><td style="text-align:left">${escaparHTML(j.equipo || '—')}</td><td><strong>${j.goles}</strong></td></tr>`).join('')}</tbody></table>`;
+}
+
+function encontrarPartidoDesdeElemento(el) {
+  let local = '', visitante = '', jornada = '';
+  const home = el.querySelector('.team-home, .next-team-home');
+  const away = el.querySelector('.team-away, .next-team-away');
+  if (home && away) { local = home.textContent.trim(); visitante = away.textContent.trim(); }
+  const card = el.closest('.jornada-card');
+  if (card) jornada = card.querySelector('h3')?.textContent.trim() || '';
+  const panel = el.closest('.round-panel');
+  if (!jornada && panel) jornada = panel.querySelector('.next-round-description')?.textContent.trim() || '';
+  return partidosGlobal.find(p => {
+    const pl = obtenerTexto(p['Equipo Local']), pv = obtenerTexto(p['Equipo Visitante']);
+    const pj = obtenerTexto(p['Jornada']);
+    const equiposCoinciden = pl.toLocaleLowerCase('es') === local.toLocaleLowerCase('es') && pv.toLocaleLowerCase('es') === visitante.toLocaleLowerCase('es');
+    return equiposCoinciden && (!jornada || !pj || pj.toLocaleLowerCase('es') === jornada.toLocaleLowerCase('es'));
+  }) || partidosGlobal.find(p => obtenerTexto(p['Equipo Local']).toLocaleLowerCase('es') === local.toLocaleLowerCase('es') && obtenerTexto(p['Equipo Visitante']).toLocaleLowerCase('es') === visitante.toLocaleLowerCase('es'));
+}
+
+function normalizarEquipo(valor) {
+  return String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLocaleLowerCase('es').replace(/\bfc\b/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function numeroJornada(valor) {
+  const m = String(valor || '').match(/(?:jornada|j)\s*(\d+)/i);
+  return m ? Number(m[1]) : null;
+}
+
+const cacheAlineaciones = new Map();
+
+function obtenerAlineacionEquipo(equipo, jornada) {
+  const clave = normalizarEquipo(equipo);
+  if (!clave || !jornada) return Promise.resolve([]);
+  if (cacheAlineaciones.has(clave)) {
+    return cacheAlineaciones.get(clave).then(filas => filtrarAlineacion(filas, jornada));
+  }
+
+  // Los nombres de las pestañas de equipos coinciden con el nombre del equipo,
+  // aunque se ignora el sufijo "FC" cuando el nombre de la pestaña no lo incluye.
+  const nombreSinFC = String(equipo).replace(/\bFC\b/ig, '').replace(/\s+/g, ' ').trim();
+  const nombresPestana = [...new Set([equipo, nombreSinFC])];
+  const leerPestana = indice => new Promise(resolve => {
+    if (indice >= nombresPestana.length) { resolve([]); return; }
+    const url = 'https://docs.google.com/spreadsheets/d/14RLnRzjuY_ThpeJr3-cqWU6-HGyz86MV8NN1EqwEDL4/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(nombresPestana[indice]) + '&_=' + Date.now();
+    Papa.parse(url, {
+      download: true, header: true, skipEmptyLines: true,
+      complete: results => {
+        const filas = Array.isArray(results.data) ? results.data : [];
+        const headers = results.meta && results.meta.fields ? results.meta.fields : [];
+        if (headers.some(h => /dorsal/i.test(h)) && headers.some(h => /jugador/i.test(h))) resolve(filas);
+        else leerPestana(indice + 1).then(resolve);
+      },
+      error: () => leerPestana(indice + 1).then(resolve)
+    });
+  });
+  const peticion = leerPestana(0);
+  cacheAlineaciones.set(clave, peticion);
+  return peticion.then(filas => filtrarAlineacion(filas, jornada));
+}
+
+function filtrarAlineacion(filas, jornada) {
+  const encabezado = 'J' + jornada;
+  return (filas || []).filter(f => {
+    const marca = valorFila(f, encabezado, 'Jornada ' + jornada);
+    return /^x$/i.test(marca) || /^si$/i.test(marca) || /^sí$/i.test(marca);
+  }).map(f => ({
+    dorsal: valorFila(f, 'DORSAL', 'Dorsal', 'Número', 'Numero'),
+    jugador: valorFila(f, 'JUGADOR', 'Jugador', 'Nombre')
+  })).filter(j => j.jugador);
+}
+
+function htmlAlineacion(equipo, jugadores) {
+  return `<div class="lineup-team"><h4>${escaparHTML(equipo)}</h4>${jugadores.length
+    ? `<ul>${jugadores.map(j => `<li>${j.dorsal ? `<strong>${escaparHTML(j.dorsal)}</strong> ` : ''}${escaparHTML(j.jugador)}</li>`).join('')}</ul>`
+    : '<p>Sin alineación registrada.</p>'}</div>`;
+}
+
+function mostrarFichaPartido(partido) {
+  if (!partido) return;
+  const local = obtenerTexto(partido['Equipo Local']);
+  const visitante = obtenerTexto(partido['Equipo Visitante']);
+  const gl = convertirGoles(partido['Goles Local']);
+  const gv = convertirGoles(partido['Goles Visitante']);
+  const ronda = obtenerTexto(partido['Jornada']);
+  const horario = obtenerTexto(partido['Horario']);
+  const fecha = obtenerTexto(partido['Fecha']) || obtenerTexto(partido['Día']) || ronda;
+  const campo = obtenerTexto(partido['Campo']) || 'No especificado';
+  const estado = obtenerTexto(partido['Estado']) || (gl !== null && gv !== null ? 'Finalizado' : 'Pendiente');
+  const jornadaNum = numeroJornada(ronda);
+
+  const fuenteGoles = detallesGlobal.length ? detallesGlobal : goleadoresGlobal;
+  const goleadores = fuenteGoles.filter(g => {
+    const glocal = valorFila(g, 'Equipo Local');
+    const gvisit = valorFila(g, 'Equipo Visitante');
+    const gj = valorFila(g, 'Jornada');
+    const tipo = valorFila(g, 'Tipo');
+    const jugador = valorFila(g, 'Jugador', 'Nombre jugador', 'Nombre');
+    const esGol = !tipo || tipo.trim().toLocaleLowerCase('es') === 'gol';
+    const equiposCoinciden = normalizarEquipo(glocal) === normalizarEquipo(local) &&
+      normalizarEquipo(gvisit) === normalizarEquipo(visitante);
+    const jornadaCoincide = !gj || !ronda || numeroJornada(gj) === jornadaNum;
+    return Boolean(jugador) && esGol && equiposCoinciden && jornadaCoincide;
+  }).map(g => ({
+    jugador: valorFila(g, 'Jugador', 'Nombre jugador', 'Nombre'),
+    equipo: valorFila(g, 'Equipo'),
+    minuto: valorFila(g, 'Minuto'),
+    minutoNumero: (String(valorFila(g, 'Minuto')).match(/\d+/) || [])[0] !== undefined
+      ? Number((String(valorFila(g, 'Minuto')).match(/\d+/) || [])[0]) : 999
+  })).sort((a, b) => a.minutoNumero - b.minutoNumero);
+
+  let parcialLocal = 0;
+  let parcialVisitante = 0;
+  const filasGoles = goleadores.map(g => {
+    const equipoNormalizado = normalizarEquipo(g.equipo);
+    const esLocal = equipoNormalizado === normalizarEquipo(local);
+    const esVisitante = equipoNormalizado === normalizarEquipo(visitante);
+    if (esLocal) parcialLocal++;
+    else if (esVisitante) parcialVisitante++;
+    const nombre = `<span class="scorer">${escaparHTML(g.jugador)}</span>${g.minuto ? ` <span class="minute">(${escaparHTML(g.minuto)}')</span>` : ''}`;
+    return `<div class="goalboard-event"><div class="goalboard-event-local">${esLocal ? nombre : ''}</div><div class="goalboard-event-score">${parcialLocal} - ${parcialVisitante}</div><div class="goalboard-event-away">${esVisitante ? nombre : ''}</div></div>`;
+  }).join('');
+  const eventos = `<div class="goalboard">${filasGoles ? `<div class="goalboard-events">${filasGoles}</div>` : '<p class="goalboard-empty">Sin goles registrados para este partido.</p>'}</div>`;
+
+  document.getElementById('match-modal-title').textContent = 'Ficha del partido';
+  document.getElementById('match-modal-body').innerHTML = `
+    <p class="subtitulo">${escaparHTML(ronda || 'Liga Cervantes')} · ${escaparHTML(estado)}</p>
+    <div class="match-scoreline"><div class="team-name">${escaparHTML(local)}</div><div class="big-score">${gl !== null && gv !== null ? `${gl} - ${gv}` : escaparHTML(horario ? formatearHorario(horario) : estado)}</div><div class="team-name">${escaparHTML(visitante)}</div></div>
+    <div class="detail-grid">
+      <div class="detail-panel"><h3>📅 Fecha y hora</h3><p>${escaparHTML(fecha || 'No especificada')}${horario ? ' · ' + escaparHTML(formatearHorario(horario)) : ''}</p></div>
+      <div class="detail-panel"><h3>📍 Campo</h3><p>${escaparHTML(campo)}</p></div>
+      <div class="detail-panel detail-wide"><h3>⚽ Goles</h3>${eventos}</div>
+      <div class="detail-panel detail-wide"><h3>👕 Alineaciones</h3><div id="alineaciones-partido" class="lineups-grid"><p>Cargando alineaciones...</p></div></div>
+    </div>`;
+
+  document.getElementById('match-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  const contenedorAlineaciones = document.getElementById('alineaciones-partido');
+  if (!jornadaNum) {
+    contenedorAlineaciones.innerHTML = '<p>No se pudo identificar la jornada del partido.</p>';
+  } else {
+    Promise.all([obtenerAlineacionEquipo(local, jornadaNum), obtenerAlineacionEquipo(visitante, jornadaNum)])
+      .then(([jugadoresLocal, jugadoresVisitante]) => {
+        // No actualizar si el usuario ya ha abierto otra ficha.
+        if (!document.getElementById('match-modal').classList.contains('open')) return;
+        const actual = document.getElementById('alineaciones-partido');
+        if (!actual) return;
+        actual.innerHTML = htmlAlineacion(local, jugadoresLocal) + htmlAlineacion(visitante, jugadoresVisitante);
+      });
+  }
+}
+
+function cerrarFichaPartido() {
+  document.getElementById('match-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('click', event => {
+  const item = event.target.closest('.match-clickable');
+  if (item) { event.preventDefault(); mostrarFichaPartido(encontrarPartidoDesdeElemento(item)); }
+  if (event.target.id === 'match-modal-close' || event.target.id === 'match-modal') cerrarFichaPartido();
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') cerrarFichaPartido();
+  if ((event.key === 'Enter' || event.key === ' ') && event.target.classList?.contains('match-clickable')) {
+    event.preventDefault(); mostrarFichaPartido(encontrarPartidoDesdeElemento(event.target));
+  }
+});
+
+// ============================================================
+// FORMATEAR HORARIO
+// ============================================================
+
+function formatearHorario(valor) {
+
+  const texto =
+    String(valor).trim();
+
+
+  /*
+   * Si Google Sheets devuelve:
+   *
+   * 18:00
+   * 18:00:00
+   *
+   * mostramos únicamente HH:MM.
+   */
+
+  const coincidencia =
+    texto.match(
+      /(\d{1,2}):(\d{2})/
+    );
+
+
+  if (coincidencia) {
+
+    const horas =
+      coincidencia[1]
+        .padStart(2, '0');
+
+    const minutos =
+      coincidencia[2];
+
+
+    return `${horas}:${minutos}`;
+
+  }
+
+
+  return texto;
+
+}
+
+
+
+
+    
+    // ============================================================
+    // ORDENAR JORNADAS
+    // ============================================================
+
+    function ordenarJornadas(a, b) {
+
+      const numeroA =
+        extraerNumero(a);
+
+      const numeroB =
+        extraerNumero(b);
+
+
+      if (
+        numeroA !== null &&
+        numeroB !== null
+      ) {
+
+        return numeroA - numeroB;
+
+      }
+
+
+      if (numeroA !== null) {
+        return -1;
+      }
+
+
+      if (numeroB !== null) {
+        return 1;
+      }
+
+
+      return a.localeCompare(
+        b,
+        'es'
+      );
+
+    }
+
+
+    // ============================================================
+    // EXTRAER NÚMERO DE JORNADA
+    // ============================================================
+
+    function extraerNumero(
+      texto
+    ) {
+
+      const coincidencia =
+        String(texto).match(/\d+/);
+
+
+      return coincidencia
+        ? parseInt(
+            coincidencia[0],
+            10
+          )
+        : null;
+
+    }
+
+
+    // ============================================================
+    // OBTENER TEXTO
+    // ============================================================
+
+    function obtenerTexto(
+      valor
+    ) {
+
+      if (
+        valor === null ||
+        valor === undefined
+      ) {
+
+        return '';
+
+      }
+
+
+      return String(valor).trim();
+
+    }
+
+
+    // ============================================================
+    // CONVERTIR GOLES
+    // ============================================================
+
+    function convertirGoles(
+      valor
+    ) {
+
+      if (
+        valor === null ||
+        valor === undefined
+      ) {
+
+        return null;
+
+      }
+
+
+      const texto =
+        String(valor).trim();
+
+
+      if (texto === '') {
+        return null;
+      }
+
+
+      const numero =
+        Number(texto);
+
+
+      if (
+        !Number.isFinite(numero) ||
+        numero < 0
+      ) {
+
+        return null;
+
+      }
+
+
+      return numero;
+
+    }
+
+
+    // ============================================================
+    // ESCAPAR HTML
+    // ============================================================
+
+    function escaparHTML(
+      texto
+    ) {
+
+      return String(texto)
+
+        .replace(
+          /&/g,
+          '&amp;'
+        )
+
+        .replace(
+          /</g,
+          '&lt;'
+        )
+
+        .replace(
+          />/g,
+          '&gt;'
+        )
+
+        .replace(
+          /"/g,
+          '&quot;'
+        )
+
+        .replace(
+          /'/g,
+          '&#039;'
+        );
+
+    }
+
+  </script>
+
+</body>
+</html>
