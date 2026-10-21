@@ -15,7 +15,10 @@
 
   
   <!-- PapaParse para leer el CSV de Google Sheets -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"
+    onerror="this.onerror=null;this.src='https://unpkg.com/papaparse@5.4.1/papaparse.min.js';">
+  </script>
 
   <style>
     :root {
@@ -1604,6 +1607,15 @@
     // ============================================================
 
     function cargarDatos() {
+
+      // Evita que la web se quede bloqueada si Papa Parse no se ha cargado.
+      if (typeof Papa === 'undefined' || typeof Papa.parse !== 'function') {
+        console.error('Papa Parse no está disponible; se ha intentado cargar desde el CDN alternativo.');
+        mostrarError(
+          'No se ha podido cargar la librería necesaria para leer los datos. Recarga la página dentro de unos instantes.'
+        );
+        return;
+      }
 
       /*
        * Añadimos un parámetro de tiempo para evitar que el navegador
