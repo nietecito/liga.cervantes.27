@@ -609,7 +609,24 @@
     .lineup-team li { margin: 5px 0; text-align: left; }
     /* Alineaciones: bloque centrado bajo el nombre del equipo, dorsales alineados a la derecha
        en su propia columna y los IDs alineados todos a la misma altura */
-    .lineup-team ul { width: max-content; max-width: 100%; margin: 0 auto; }
+    /* Cada lista empieza en el borde izquierdo de su columna:
+       el local a la izquierda y el visitante desde la mitad del recuadro */
+    .lineup-team h4 { text-align: left; }
+    .lineup-team ul { width: max-content; max-width: 100%; margin: 0; }
+
+    /* Nombres de equipo que abren la plantilla */
+    .team-clickable { cursor: pointer; border-bottom: 1px dashed rgba(40,104,169,.45); transition: color .15s ease; }
+    .team-clickable:hover { color: var(--secondary-color); border-bottom-style: solid; }
+    .team-clickable:focus-visible { outline: 3px solid rgba(49,130,206,.55); outline-offset: 2px; border-radius: 3px; }
+
+    /* Tabla de plantilla */
+    .squad-table { width: 100%; min-width: 0; }
+    .squad-table th { background: var(--secondary-color); color: #fff; padding: 10px 8px; }
+    .squad-table td { padding: 9px 8px; border-bottom: 1px solid var(--border-color); }
+    .squad-table td.squad-id { text-align: left; font-weight: 700; white-space: nowrap; }
+    @media (max-width: 600px) {
+      .squad-table th, .squad-table td { padding: 7px 4px; font-size: .78rem; }
+    }
     .lineup-team li { display: grid; grid-template-columns: 2.6em auto; column-gap: .7em; align-items: baseline; }
     .lineup-dorsal { text-align: right; font-weight: 700; color: var(--primary-color); font-variant-numeric: tabular-nums; }
     .lineup-id { text-align: left; white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -1959,7 +1976,7 @@
             </td>
 
             <td class="team-name">
-              ${escaparHTML(equipo.nombre)}
+              <span class="team-clickable" role="button" tabindex="0" data-equipo="${escaparHTML(equipo.nombre)}" aria-label="Ver plantilla de ${escaparHTML(equipo.nombre)}">${escaparHTML(equipo.nombre)}</span>
             </td>
 
             <td class="points">
@@ -2833,11 +2850,15 @@ function numeroJornada(valor) {
 const cacheAlineaciones = new Map();
 
 function obtenerAlineacionEquipo(equipo, jornada) {
+  if (!jornada) return Promise.resolve([]);
+  return cargarPestanaEquipo(equipo).then(filas => filtrarAlineacion(filas, jornada));
+}
+
+// Lee (una sola vez) la pestaña del equipo y devuelve sus filas.
+function cargarPestanaEquipo(equipo) {
   const clave = normalizarEquipo(equipo);
-  if (!clave || !jornada) return Promise.resolve([]);
-  if (cacheAlineaciones.has(clave)) {
-    return cacheAlineaciones.get(clave).then(filas => filtrarAlineacion(filas, jornada));
-  }
+  if (!clave) return Promise.resolve([]);
+  if (cacheAlineaciones.has(clave)) return cacheAlineaciones.get(clave);
 
   // Los nombres de las pestañas de equipos coinciden con el nombre del equipo,
   // aunque se ignora el sufijo "FC" cuando el nombre de la pestaña no lo incluye.
@@ -2863,7 +2884,7 @@ function obtenerAlineacionEquipo(equipo, jornada) {
   });
   const peticion = leerPestana(0);
   cacheAlineaciones.set(clave, peticion);
-  return peticion.then(filas => filtrarAlineacion(filas, jornada));
+  return peticion;
 }
 
 function filtrarAlineacion(filas, jornada) {
@@ -2889,6 +2910,121 @@ function dorsalPrincipal(fila) {
     if (v) return v;
   }
   return '';
+}
+
+// ============================================================
+// PLANTILLA DEL EQUIPO (al pinchar en su nombre)
+// ============================================================
+
+// Todos los dorsales de un jugador: primero el "principal" y después el resto de columnas de dorsal.
+function dorsalesJugador(fila) {
+  const claves = Object.keys(fila || {}).filter(k => /dors|n[uú]mero/i.test(k));
+  claves.sort((a, b) => (/principal/i.test(b) ? 1 : 0) - (/principal/i.test(a) ? 1 : 0));
+  const lista = [];
+  claves.forEach(k => {
+    String(fila[k] ?? '').split(/[\/,;]+/).map(v => v.trim()).filter(Boolean)
+      .forEach(v => { if (!lista.includes(v)) lista.push(v); });
+  });
+  return lista;
+}
+
+// Números de jornada en los que el jugador tiene X.
+function jornadasJugadas(fila) {
+  const jugadas = [];
+  Object.keys(fila || {}).forEach(k => {
+    const m = k.match(/^\s*j\s*(\d+)\s*$/i);
+    if (m && /^(x|si|sí)$/i.test(String(fila[k] ?? '').trim())) jugadas.push(Number(m[1]));
+  });
+  return jugadas;
+}
+
+// "ALK 01", "ALK-01" y "alk01" se consideran el mismo ID.
+function normalizarID(valor) {
+  return String(valor || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
+function calcularPlantilla(equipo, filas) {
+  const jugadores = (filas || []).map(f => ({
+    id: valorFila(f, 'JUGADOR', 'Jugador'),
+    dorsales: dorsalesJugador(f),
+    jornadas: jornadasJugadas(f),
+    goles: 0
+  })).filter(j => j.id);
+
+  const porID = new Map(jugadores.map(j => [normalizarID(j.id), j]));
+  let golesSinAsignar = 0;
+
+  const equipoNorm = normalizarEquipo(equipo);
+  goleadoresGlobal.forEach(g => {
+    if (normalizarEquipo(valorFila(g, 'Equipo')) !== equipoNorm) return;
+    const texto = valorFila(g, 'Jugador', 'Nombre jugador', 'Nombre');
+    const cantidad = Number(valorFila(g, 'Goles', 'Cantidad') || 1);
+    if (!texto || !Number.isFinite(cantidad)) return;
+
+    // 1) El goleador está apuntado con su ID.
+    let jugador = porID.get(normalizarID(texto));
+
+    // 2) Está apuntado por dorsal ("DORSAL 11" o "11"): se busca entre los que
+    //    tienen ese dorsal y jugaron esa jornada.
+    if (!jugador) {
+      const m = texto.match(/^\s*(?:dorsal\s*)?(\d+)\s*$/i);
+      if (m) {
+        const dorsal = String(Number(m[1]));
+        const jTexto = valorFila(g, 'Jornada');
+        const jNum = numeroJornada(jTexto) ?? extraerNumero(jTexto);
+        let candidatos = jugadores.filter(j => j.dorsales.some(d => String(Number(d)) === dorsal));
+        if (jNum !== null && candidatos.length > 1) {
+          const enJornada = candidatos.filter(j => j.jornadas.includes(jNum));
+          if (enJornada.length) candidatos = enJornada;
+        }
+        if (candidatos.length === 1) jugador = candidatos[0];
+      }
+    }
+
+    if (jugador) jugador.goles += cantidad;
+    else golesSinAsignar += cantidad;
+  });
+
+  jugadores.sort((a, b) => a.id.localeCompare(b.id, 'es', { numeric: true, sensitivity: 'base' }));
+  return { jugadores, golesSinAsignar };
+}
+
+function mostrarPlantillaEquipo(equipo) {
+  if (!equipo) return;
+  document.getElementById('match-modal-title').textContent = equipo;
+  const cuerpo = document.getElementById('match-modal-body');
+  cuerpo.innerHTML = '<p class="subtitulo">Plantilla</p><p class="empty-state">Cargando plantilla...</p>';
+  cuerpo.dataset.equipo = equipo;
+  document.getElementById('match-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  cargarPestanaEquipo(equipo).then(filas => {
+    // No pintar si se ha cerrado la ventana o se ha abierto otra cosa.
+    if (!document.getElementById('match-modal').classList.contains('open') || cuerpo.dataset.equipo !== equipo) return;
+    const { jugadores, golesSinAsignar } = calcularPlantilla(equipo, filas);
+    if (!jugadores.length) {
+      cuerpo.innerHTML = '<p class="subtitulo">Plantilla</p><p class="empty-state">No hay jugadores registrados para este equipo.</p>';
+      return;
+    }
+    const totalGoles = jugadores.reduce((t, j) => t + j.goles, 0) + golesSinAsignar;
+    const filasHTML = jugadores.map(j => `
+      <tr>
+        <td class="squad-id">${escaparHTML(j.id)}</td>
+        <td>${j.dorsales.length ? escaparHTML(j.dorsales.join(' / ')) : '—'}</td>
+        <td>${j.jornadas.length}</td>
+        <td><strong>${j.goles}</strong></td>
+      </tr>`).join('');
+    cuerpo.innerHTML = `
+      <p class="subtitulo">Plantilla · ${jugadores.length} jugadores · ${totalGoles} goles</p>
+      <div class="table-container">
+        <table class="squad-table">
+          <thead><tr><th style="text-align:left">Jugador</th><th>Dorsal</th><th>PJ</th><th>Goles</th></tr></thead>
+          <tbody>${filasHTML}</tbody>
+        </table>
+      </div>
+      ${golesSinAsignar ? `<p class="match-hint">${golesSinAsignar} gol(es) no se han podido asignar a ningún jugador.</p>` : ''}
+      <p class="match-hint">PJ: partidos con alineación registrada.</p>`;
+  });
 }
 
 function htmlAlineacion(equipo, jugadores) {
@@ -2944,9 +3080,10 @@ function mostrarFichaPartido(partido) {
   const eventos = `<div class="goalboard">${filasGoles ? `<div class="goalboard-events">${filasGoles}</div>` : '<p class="goalboard-empty">Sin goles registrados para este partido.</p>'}</div>`;
 
   document.getElementById('match-modal-title').textContent = 'Ficha del partido';
+  document.getElementById('match-modal-body').dataset.equipo = '';
   document.getElementById('match-modal-body').innerHTML = `
     <p class="subtitulo">${escaparHTML(ronda || 'Liga Cervantes')} · ${escaparHTML(estado)}</p>
-    <div class="match-scoreline"><div class="team-name">${escaparHTML(local)}</div><div class="big-score">${gl !== null && gv !== null ? `${gl} - ${gv}` : escaparHTML(horario ? formatearHorario(horario) : estado)}</div><div class="team-name">${escaparHTML(visitante)}</div></div>
+    <div class="match-scoreline"><div class="team-name"><span class="team-clickable" role="button" tabindex="0" data-equipo="${escaparHTML(local)}">${escaparHTML(local)}</span></div><div class="big-score">${gl !== null && gv !== null ? `${gl} - ${gv}` : escaparHTML(horario ? formatearHorario(horario) : estado)}</div><div class="team-name"><span class="team-clickable" role="button" tabindex="0" data-equipo="${escaparHTML(visitante)}">${escaparHTML(visitante)}</span></div></div>
     <div class="detail-grid">
       <div class="detail-panel"><h3>📅 Fecha y hora</h3><p>${escaparHTML(fecha || 'No especificada')}${horario ? ' · ' + escaparHTML(formatearHorario(horario)) : ''}</p></div>
       <div class="detail-panel"><h3>📍 Campo</h3><p>${escaparHTML(campo)}</p></div>
@@ -2978,12 +3115,17 @@ function cerrarFichaPartido() {
 }
 
 document.addEventListener('click', event => {
+  const equipoClic = event.target.closest('.team-clickable');
+  if (equipoClic) { event.preventDefault(); mostrarPlantillaEquipo(equipoClic.dataset.equipo); return; }
   const item = event.target.closest('.match-clickable');
   if (item) { event.preventDefault(); mostrarFichaPartido(encontrarPartidoDesdeElemento(item)); }
   if (event.target.id === 'match-modal-close' || event.target.id === 'match-modal') cerrarFichaPartido();
 });
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape') cerrarFichaPartido();
+  if ((event.key === 'Enter' || event.key === ' ') && event.target.classList?.contains('team-clickable')) {
+    event.preventDefault(); mostrarPlantillaEquipo(event.target.dataset.equipo); return;
+  }
   if ((event.key === 'Enter' || event.key === ' ') && event.target.classList?.contains('match-clickable')) {
     event.preventDefault(); mostrarFichaPartido(encontrarPartidoDesdeElemento(event.target));
   }
