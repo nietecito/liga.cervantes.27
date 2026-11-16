@@ -2845,7 +2845,11 @@ function obtenerAlineacionEquipo(equipo, jornada) {
       complete: results => {
         const filas = Array.isArray(results.data) ? results.data : [];
         const headers = results.meta && results.meta.fields ? results.meta.fields : [];
-        if (headers.some(h => /dorsal/i.test(h)) && headers.some(h => /jugador/i.test(h))) resolve(filas);
+        // Basta con que la pestaña tenga la columna JUGADOR (el ID) y columnas de jornada (J1, J2...).
+        // La columna de dorsal ya no es obligatoria ni tiene que llamarse exactamente "Dorsal".
+        const tieneJugador = headers.some(h => /^\s*jugador\s*$/i.test(h));
+        const tieneJornadas = headers.some(h => /^\s*j\s*\d+\s*$/i.test(h));
+        if (tieneJugador && tieneJornadas) resolve(filas);
         else leerPestana(indice + 1).then(resolve);
       },
       error: () => leerPestana(indice + 1).then(resolve)
@@ -2862,9 +2866,23 @@ function filtrarAlineacion(filas, jornada) {
     const marca = valorFila(f, encabezado, 'Jornada ' + jornada);
     return /^x$/i.test(marca) || /^si$/i.test(marca) || /^sí$/i.test(marca);
   }).map(f => ({
-    dorsal: valorFila(f, 'DORSAL', 'Dorsal', 'Número', 'Numero'),
-    jugador: valorFila(f, 'JUGADOR', 'Jugador', 'Nombre')
+    dorsal: dorsalPrincipal(f),
+    // Solo se usa la columna JUGADOR (ID tipo "ALK 01"); nunca la columna Nombre.
+    jugador: valorFila(f, 'JUGADOR', 'Jugador')
   })).filter(j => j.jugador);
+}
+
+// Devuelve el dorsal principal aunque la columna se llame "Dorsal", "Dorsal Principal",
+// "Dorsl Principal", "Número"... Si hay varias columnas de dorsal, prioriza la "principal".
+function dorsalPrincipal(fila) {
+  const claves = Object.keys(fila || {});
+  const candidatas = claves.filter(k => /dors|n[uú]mero/i.test(k));
+  candidatas.sort((a, b) => (/principal/i.test(b) ? 1 : 0) - (/principal/i.test(a) ? 1 : 0));
+  for (const k of candidatas) {
+    const v = String(fila[k] ?? '').trim();
+    if (v) return v;
+  }
+  return '';
 }
 
 function htmlAlineacion(equipo, jugadores) {
