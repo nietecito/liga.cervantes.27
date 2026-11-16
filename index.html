@@ -615,8 +615,8 @@
     .lineup-team ul { width: max-content; max-width: 100%; margin: 0; }
 
     /* Nombres de equipo que abren la plantilla */
-    .team-clickable { cursor: pointer; border-bottom: 1px dashed rgba(40,104,169,.45); transition: color .15s ease; }
-    .team-clickable:hover { color: var(--secondary-color); border-bottom-style: solid; }
+    .team-clickable { cursor: pointer; transition: color .15s ease; }
+    .team-clickable:hover { color: var(--secondary-color); text-decoration: underline; text-underline-offset: 3px; }
     .team-clickable:focus-visible { outline: 3px solid rgba(49,130,206,.55); outline-offset: 2px; border-radius: 3px; }
 
     /* Tabla de plantilla */
@@ -669,10 +669,11 @@
       .lineup-team li { font-size: .68rem !important; line-height: 1.25; margin: 4px 0; overflow-wrap: anywhere; }
       .scorers-table { table-layout: fixed; }
       .scorers-table th, .scorers-table td { padding: 7px 3px; font-size: .68rem; line-height: 1.25; overflow-wrap: anywhere; }
-      .scorers-table th:nth-child(1), .scorers-table td:nth-child(1) { width: 9%; }
-      .scorers-table th:nth-child(2), .scorers-table td:nth-child(2) { width: 36%; }
-      .scorers-table th:nth-child(3), .scorers-table td:nth-child(3) { width: 39%; }
-      .scorers-table th:nth-child(4), .scorers-table td:nth-child(4) { width: 16%; }
+      .scorers-table th:nth-child(1), .scorers-table td:nth-child(1) { width: 10%; }
+      .scorers-table th:nth-child(2), .scorers-table td:nth-child(2) { width: 22%; }
+      .scorers-table th:nth-child(3), .scorers-table td:nth-child(3) { width: 15%; }
+      .scorers-table th:nth-child(4), .scorers-table td:nth-child(4) { width: 39%; }
+      .scorers-table th:nth-child(5), .scorers-table td:nth-child(5) { width: 14%; }
       #tab-goleadores section { padding: 12px 8px; }
       #tab-goleadores h2 { font-size: 1.35rem; }
       #tab-goleadores .subtitulo { font-size: .9rem; }
@@ -2817,7 +2818,28 @@ function renderizarGoleadores() {
   const lista = [...acumulado.values()].sort((a,b) => b.goles-a.goles || a.jugador.localeCompare(b.jugador,'es'));
   if (!lista.length) { cont.className='empty-state'; cont.textContent='No se encontraron filas válidas.'; return; }
   cont.className = 'table-container';
-  cont.innerHTML = `<table class="scorers-table"><thead><tr><th>Pos.</th><th style="text-align:left">Jugador</th><th style="text-align:left">Equipo</th><th>Goles</th></tr></thead><tbody>${lista.map((j,i)=>`<tr><td>${i+1}</td><td style="text-align:left;font-weight:600">${escaparHTML(j.jugador)}</td><td style="text-align:left">${escaparHTML(j.equipo || '—')}</td><td><strong>${j.goles}</strong></td></tr>`).join('')}</tbody></table>`;
+  cont.innerHTML = `<table class="scorers-table"><thead><tr><th>Pos.</th><th style="text-align:left">Jugador</th><th>Dorsal</th><th style="text-align:left">Equipo</th><th>Goles</th></tr></thead><tbody>${lista.map((j,i)=>`<tr><td>${i+1}</td><td style="text-align:left;font-weight:600">${escaparHTML(j.jugador)}</td><td class="scorer-dorsal" data-equipo="${escaparHTML(j.equipo)}" data-id="${escaparHTML(normalizarID(j.jugador))}">…</td><td style="text-align:left">${j.equipo ? `<span class="team-clickable" role="button" tabindex="0" data-equipo="${escaparHTML(j.equipo)}" aria-label="Ver plantilla de ${escaparHTML(j.equipo)}">${escaparHTML(j.equipo)}</span>` : '—'}</td><td><strong>${j.goles}</strong></td></tr>`).join('')}</tbody></table>`;
+  rellenarDorsalesGoleadores(cont);
+}
+
+// Pone en la tabla de goleadores el dorsal principal de cada jugador,
+// leído de la pestaña de su equipo (cada pestaña se descarga una sola vez).
+function rellenarDorsalesGoleadores(cont) {
+  const celdas = [...cont.querySelectorAll('.scorer-dorsal')];
+  const equipos = [...new Set(celdas.map(c => c.dataset.equipo).filter(Boolean))];
+  celdas.filter(c => !c.dataset.equipo).forEach(c => { c.textContent = '—'; });
+  equipos.forEach(equipo => {
+    cargarPestanaEquipo(equipo).then(filas => {
+      const dorsales = new Map();
+      (filas || []).forEach(f => {
+        const id = idJugador(f);
+        if (id) dorsales.set(normalizarID(id), dorsalPrincipal(f));
+      });
+      celdas.filter(c => c.dataset.equipo === equipo).forEach(c => {
+        c.textContent = dorsales.get(c.dataset.id) || '—';
+      });
+    });
+  });
 }
 
 function encontrarPartidoDesdeElemento(el) {
