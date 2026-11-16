@@ -1546,7 +1546,7 @@
 
     // La pestaña Detalles de tu Google Sheets (gid confirmado por el enlace).
     // La hoja debe estar compartida para que cualquiera con el enlace pueda verla.
-    const DETALLES_CSV_URL = 'https://docs.google.com/spreadsheets/d/14RLnRzjuY_ThpeJr3-cqWU6-HGyz86MV8NN1EqwEDL4/gviz/tq?tqx=out:csv&sheet=Detalles';
+    const DETALLES_CSV_URL = 'https://docs.google.com/spreadsheets/d/14RLnRzjuY_ThpeJr3-cqWU6-HGyz86MV8NN1EqwEDL4/gviz/tq?tqx=out:csv&headers=1&sheet=Detalles';
     // Los goleadores se calculan automáticamente a partir de las filas con Tipo = Gol.
     const GOLEADORES_CSV_URL = '';
     let goleadoresGlobal = [];
@@ -2866,7 +2866,7 @@ function cargarPestanaEquipo(equipo) {
   const nombresPestana = [...new Set([equipo, nombreSinFC])];
   const leerPestana = indice => new Promise(resolve => {
     if (indice >= nombresPestana.length) { resolve([]); return; }
-    const url = 'https://docs.google.com/spreadsheets/d/14RLnRzjuY_ThpeJr3-cqWU6-HGyz86MV8NN1EqwEDL4/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(nombresPestana[indice]) + '&_=' + Date.now();
+    const url = 'https://docs.google.com/spreadsheets/d/14RLnRzjuY_ThpeJr3-cqWU6-HGyz86MV8NN1EqwEDL4/gviz/tq?tqx=out:csv&headers=1&sheet=' + encodeURIComponent(nombresPestana[indice]) + '&_=' + Date.now();
     Papa.parse(url, {
       download: true, header: true, skipEmptyLines: true,
       complete: results => {
@@ -2874,8 +2874,8 @@ function cargarPestanaEquipo(equipo) {
         const headers = results.meta && results.meta.fields ? results.meta.fields : [];
         // Basta con que la pestaña tenga la columna JUGADOR (el ID) y columnas de jornada (J1, J2...).
         // La columna de dorsal ya no es obligatoria ni tiene que llamarse exactamente "Dorsal".
-        const tieneJugador = headers.some(h => /^\s*jugador\s*$/i.test(h));
-        const tieneJornadas = headers.some(h => /^\s*j\s*\d+\s*$/i.test(h));
+        const tieneJugador = headers.some(h => /\bjugador\b/i.test(h));
+        const tieneJornadas = headers.some(h => /^\s*j\s*\d+\b/i.test(h));
         if (tieneJugador && tieneJornadas) resolve(filas);
         else leerPestana(indice + 1).then(resolve);
       },
@@ -2895,12 +2895,20 @@ function filtrarAlineacion(filas, jornada) {
   }).map(f => ({
     dorsal: dorsalPrincipal(f),
     // Solo se usa la columna JUGADOR (ID tipo "ALK 01"); nunca la columna Nombre.
-    jugador: valorFila(f, 'JUGADOR', 'Jugador')
+    jugador: idJugador(f)
   })).filter(j => j.jugador);
 }
 
 // Devuelve el dorsal principal aunque la columna se llame "Dorsal", "Dorsal Principal",
 // "Dorsl Principal", "Número"... Si hay varias columnas de dorsal, prioriza la "principal".
+// ID del jugador: columna "JUGADOR" (o, si Google la junta con otro texto, la que contenga "jugador").
+function idJugador(fila) {
+  const exacto = valorFila(fila, 'JUGADOR');
+  if (exacto) return exacto;
+  const clave = Object.keys(fila || {}).find(k => /\bjugador\b/i.test(k));
+  return clave ? String(fila[clave] ?? '').trim() : '';
+}
+
 function dorsalPrincipal(fila) {
   const claves = Object.keys(fila || {});
   const candidatas = claves.filter(k => /dors|n[uú]mero/i.test(k));
@@ -2945,7 +2953,7 @@ function normalizarID(valor) {
 
 function calcularPlantilla(equipo, filas) {
   const jugadores = (filas || []).map(f => ({
-    id: valorFila(f, 'JUGADOR', 'Jugador'),
+    id: idJugador(f),
     dorsales: dorsalesJugador(f),
     jornadas: jornadasJugadas(f),
     goles: 0
