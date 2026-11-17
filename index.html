@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google-site-verification" content="GrjsXBq5ZrAGSzWaPEkTGkFw3HmKAt9ZfkpSBcXvz7A" />
-  <meta name="description" content="Sigue la Liga Cervantes 2026-27: clasificación de la 4.ª División de los domingos por la mañana, resultados por jornada, próximos partidos y máximos goleadores." />
+  <meta name="description" content="Sigue la Liga Cervantes 2026-27: clasificación de la 4.ª División de los domingos por la mañana, resultados por jornada y próximos partidos." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://nietecito.github.io/liga.cervantes.27/" />
   
@@ -105,7 +105,7 @@
 
     .tabs {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 5px;
       background: #e2e8f0;
       padding: 5px;
@@ -997,7 +997,7 @@
       }
 
       .tabs {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 5px;
         padding: 5px;
         margin-bottom: 13px;
@@ -1388,7 +1388,7 @@
     <section class="seo-intro" aria-labelledby="seo-intro-title">
       <h2 id="seo-intro-title">Clasificación y resultados temporada 2026-27</h2>
       <p>
-        Consulta la clasificación, los resultados, los horarios y los goleadores. Sigue todas las jornadas y la actualidad de la competición.
+        Consulta la clasificación, los resultados y los horarios. Sigue todas las jornadas y la actualidad de la competición.
       </p>
       <p class="last-update" id="last-update">
         Última actualización: cargando…
@@ -1437,12 +1437,6 @@
           Actualidad
         </button>
 
-        <button
-          type="button"
-          class="tab-button"
-          data-tab="goleadores">
-          Goleadores
-        </button>
 
       </div>
 
@@ -1551,14 +1545,6 @@
 
       </div>
 
-      <!-- PESTAÑA GOLEADORES -->
-      <div id="tab-goleadores" class="tab-content">
-        <section>
-          <h2>Máximos goleadores</h2>
-          
-          <div id="goleadores-contenido" class="empty-state">Cargando goleadores...</div>
-        </section>
-      </div>
 
     </div>
 
@@ -1580,12 +1566,15 @@
     // CONFIGURACIÓN
     // ============================================================
 
+    // Libro público: solo la pestaña Partidos (gid=0).
     const SHEET_CSV_URL =
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vTnB4t1kN7IDlmugRW2R7HNMNU-XCfdHlU3OWZifnjtto7A4l5zctDevB8mweRuGf2_F4iXwucexThV/pub?output=csv';
+      'https://docs.google.com/spreadsheets/d/1x0n9wrXtyhDTEVKTQaVefEaS9Zsur6RlXewhnfuAPfo/gviz/tq?tqx=out:csv&headers=1&gid=0';
 
     // La pestaña Detalles de tu Google Sheets (gid confirmado por el enlace).
     // La hoja debe estar compartida para que cualquiera con el enlace pueda verla.
-    const DETALLES_CSV_URL = 'https://docs.google.com/spreadsheets/d/14RLnRzjuY_ThpeJr3-cqWU6-HGyz86MV8NN1EqwEDL4/gviz/tq?tqx=out:csv&headers=1&sheet=Detalles';
+    // Goles, alineaciones y plantillas desactivados: la web ya no lee el libro privado.
+    const DETALLES_CSV_URL = '';
+    const PLANTILLAS_SHEET_ID = '';
     // Los goleadores se calculan automáticamente a partir de las filas con Tipo = Gol.
     const GOLEADORES_CSV_URL = '';
     let goleadoresGlobal = [];
@@ -2902,7 +2891,7 @@ function valorFila(fila, ...claves) {
 
 function renderizarGoleadores() {
   const cont = document.getElementById('goleadores-contenido');
-  if (!cont) return;
+  if (!cont) return; // pestaña Goleadores retirada
   if (!goleadoresGlobal.length) {
     cont.className = 'empty-state';
     cont.textContent = 'Aún no hay goles registrados.';
@@ -3006,7 +2995,8 @@ function cargarPestanaEquipo(equipo) {
   const nombresPestana = [...new Set([equipo, nombreSinFC])];
   const leerPestana = indice => new Promise(resolve => {
     if (indice >= nombresPestana.length) { resolve([]); return; }
-    const url = 'https://docs.google.com/spreadsheets/d/14RLnRzjuY_ThpeJr3-cqWU6-HGyz86MV8NN1EqwEDL4/gviz/tq?tqx=out:csv&headers=1&sheet=' + encodeURIComponent(nombresPestana[indice]) + '&_=' + Date.now();
+    if (!PLANTILLAS_SHEET_ID) { resolve([]); return; }
+    const url = 'https://docs.google.com/spreadsheets/d/' + PLANTILLAS_SHEET_ID + '/gviz/tq?tqx=out:csv&headers=1&sheet=' + encodeURIComponent(nombresPestana[indice]) + '&_=' + Date.now();
     Papa.parse(url, {
       download: true, header: true, skipEmptyLines: true,
       complete: results => {
@@ -3243,7 +3233,7 @@ function mostrarFichaPartido(partido) {
     <div class="detail-grid">
       <div class="detail-panel"><h3>📅 Fecha y hora</h3><p>${escaparHTML(fecha || 'No especificada')}${horario ? ' · ' + escaparHTML(formatearHorario(horario)) : ''}</p></div>
       <div class="detail-panel"><h3>📍 Campo</h3><p>${escaparHTML(campo)}</p></div>
-      <div class="detail-panel detail-wide"><h3>⚽ Goles</h3>${eventos}</div>
+      ${MODO_PRIVADO ? '' : `<div class="detail-panel detail-wide"><h3>⚽ Goles</h3>${eventos}</div>`}
       ${MODO_PRIVADO ? '' : '<div class="detail-panel detail-wide"><h3>👕 Alineaciones</h3><div id="alineaciones-partido" class="lineups-grid"><p>Cargando alineaciones...</p></div></div>'}
     </div>`;
 
