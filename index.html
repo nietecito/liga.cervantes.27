@@ -1689,11 +1689,15 @@
 
         download: true,
 
-        header: true,
+        // Se lee sin cabecera automática y se busca la fila de títulos a mano,
+        // para que nunca se pierda (ni se mezcle con los títulos) el primer partido.
+        header: false,
 
         skipEmptyLines: true,
 
         complete: function(results) {
+
+          results.data = filasConCabecera(results.data);
 
           if (
             !results.data ||
@@ -1754,6 +1758,47 @@
 
       });
 
+    }
+
+
+    // ============================================================
+    // CABECERA DE LA HOJA DE PARTIDOS
+    // ============================================================
+
+    const COLUMNAS_PARTIDOS = ['Jornada', 'Equipo Local', 'Equipo Visitante', 'Goles Local',
+      'Goles Visitante', 'Horario', 'Estado', 'Campo', 'Fecha'];
+
+    // Convierte las filas del CSV en objetos usando la fila de títulos.
+    // Si Google ha juntado los títulos con el primer partido en la misma celda
+    // (p. ej. "Jornada Jornada 1 - 04-oct"), separa ambos y recupera ese partido.
+    function filasConCabecera(filas) {
+      const lista = (filas || []).filter(f => Array.isArray(f) && f.some(c => String(c).trim() !== ''));
+      const idx = lista.findIndex(f => f.some(c => /^\s*equipo local/i.test(String(c))));
+      if (idx === -1) return [];
+      const cabecera = [];
+      const primeraFila = [];
+      let mezclada = false;
+      lista[idx].forEach(celda => {
+        const texto = String(celda).trim();
+        const nombre = COLUMNAS_PARTIDOS.find(k => texto.toLowerCase().startsWith(k.toLowerCase()));
+        if (nombre) {
+          cabecera.push(nombre);
+          const resto = texto.slice(nombre.length).trim();
+          if (resto) mezclada = true;
+          primeraFila.push(resto);
+        } else {
+          cabecera.push(texto);
+          primeraFila.push('');
+        }
+      });
+      const aObjeto = f => {
+        const o = {};
+        cabecera.forEach((h, i) => { if (h) o[h] = f[i] ?? ''; });
+        return o;
+      };
+      const datos = lista.slice(idx + 1).map(aObjeto);
+      if (mezclada) datos.unshift(aObjeto(primeraFila));
+      return datos;
     }
 
 
