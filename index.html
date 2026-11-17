@@ -1344,13 +1344,45 @@
       }
     }
 
+
+    /* ============================================================
+       REDISEÑO 2026-11: título con icono, forma, ganador en negrita
+       ============================================================ */
+    .brand-title { display: inline-flex; align-items: center; justify-content: center; gap: 12px; }
+    .brand-title svg { flex: 0 0 auto; }
+    .winner { font-weight: 700 !important; }
+    th.col-forma, td.col-forma { width: 140px; }
+    .forma { display: inline-flex; gap: 4px; justify-content: center; }
+    .forma span { display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center; border-radius: 5px; font-size: .68rem; font-weight: 800; }
+    .forma .v { color: #166534; background: #dcfce7; }
+    .forma .e { color: #92400e; background: #fef3c7; }
+    .forma .d { color: #991b1b; background: #fee2e2; }
+    .forma .n { color: #64748b; background: #e2e8f0; }
+    .forma-legend { margin-top: 10px; font-size: .8rem; color: #64748b; }
+    /* Posición y equipo fijos al desplazar la tabla hacia los lados */
+    #tab-clasificacion th:nth-child(1), #tab-clasificacion td:nth-child(1) { position: sticky; left: 0; z-index: 1; }
+    #tab-clasificacion th:nth-child(2), #tab-clasificacion td:nth-child(2) { position: sticky; left: 48px; z-index: 1; }
+    #tab-clasificacion th:nth-child(1) { min-width: 48px; }
+    #tab-clasificacion td:nth-child(1), #tab-clasificacion td:nth-child(2) { background: #ffffff; }
+    #tab-clasificacion tbody tr:nth-child(even) td:nth-child(1),
+    #tab-clasificacion tbody tr:nth-child(even) td:nth-child(2) { background: #fbfcfe; }
+    #tab-clasificacion tbody tr:hover td:nth-child(1),
+    #tab-clasificacion tbody tr:hover td:nth-child(2) { background: #f0f6fd; }
+    @media (max-width: 600px) {
+      #tab-clasificacion table { width: 860px; min-width: 860px; }
+      #tab-clasificacion th:nth-child(11), #tab-clasificacion td:nth-child(11) { width: 140px; overflow: visible; }
+      .forma span { width: 20px; height: 20px; }
+    }
   </style>
 </head>
 
 <body>
 
   <header>
-    <h1>🏆 LIGA CERVANTES 🏆</h1>
+    <h1 class="brand-title">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f6c453" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"></path><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"></path></svg>
+      LIGA CERVANTES
+    </h1>
 
     <!-- Texto descriptivo visible para usuarios y buscadores -->
     <section class="seo-intro" aria-labelledby="seo-intro-title">
@@ -1359,7 +1391,7 @@
         Consulta la clasificación, los resultados, los horarios y los goleadores. Sigue todas las jornadas y la actualidad de la competición.
       </p>
       <p class="last-update" id="last-update">
-        Última actualización: HOY
+        Última actualización: cargando…
       </p>
     </section>
   </header>
@@ -1448,6 +1480,7 @@
                   <th>GF</th>
                   <th>GC</th>
                   <th>DG</th>
+                  <th class="col-forma">Forma</th>
                 </tr>
 
               </thead>
@@ -1459,6 +1492,8 @@
             </table>
 
           </div>
+
+          <p class="forma-legend">Forma: últimos 5 partidos (V victoria · E empate · D derrota).</p>
 
         </section>
 
@@ -1928,9 +1963,14 @@
       });
 
 
+      const forma = calcularForma(partidos);
+      clasificacion.forEach(eq => { eq.forma = forma.get(eq.nombre) || []; });
+
       renderizarClasificacion(
         clasificacion
       );
+
+      actualizarFechaActualizacion(partidos);
 
 
       renderizarJornadas(
@@ -2025,6 +2065,8 @@
               ${dg > 0 ? '+' + dg : dg}
             </td>
 
+            <td class="col-forma">${htmlForma(equipo.forma)}</td>
+
           `;
 
 
@@ -2033,6 +2075,57 @@
         }
       );
 
+    }
+
+
+    // ============================================================
+    // FORMA (últimos 5 resultados) Y FECHA DE ACTUALIZACIÓN
+    // ============================================================
+
+    function calcularForma(partidos) {
+      const porEquipo = new Map();
+      (partidos || []).forEach((p, indice) => {
+        const local = obtenerTexto(p['Equipo Local']);
+        const visitante = obtenerTexto(p['Equipo Visitante']);
+        const gl = convertirGoles(p['Goles Local']);
+        const gv = convertirGoles(p['Goles Visitante']);
+        const aplazado = obtenerTexto(p['Estado']).toLowerCase() === 'aplazado';
+        if (!local || !visitante || aplazado || gl === null || gv === null) return;
+        const j = extraerNumero(obtenerTexto(p['Jornada']));
+        const add = (eq, r) => {
+          if (!porEquipo.has(eq)) porEquipo.set(eq, []);
+          porEquipo.get(eq).push({ r, j: j === null ? -1 : j, indice });
+        };
+        add(local, gl > gv ? 'V' : gl === gv ? 'E' : 'D');
+        add(visitante, gv > gl ? 'V' : gv === gl ? 'E' : 'D');
+      });
+      const resultado = new Map();
+      porEquipo.forEach((lista, eq) => {
+        lista.sort((a, b) => a.j - b.j || a.indice - b.indice);
+        resultado.set(eq, lista.slice(-5).map(x => x.r));
+      });
+      return resultado;
+    }
+
+    function htmlForma(letras) {
+      const titulos = { V: 'Victoria', E: 'Empate', D: 'Derrota' };
+      const huecos = Array.from({ length: Math.max(0, 5 - letras.length) }, () => '<span class="n" title="Sin partido">–</span>');
+      const casillas = letras.map(l => `<span class="${l.toLowerCase()}" title="${titulos[l]}">${l}</span>`);
+      return `<span class="forma" aria-label="Últimos ${letras.length} partidos: ${letras.join(' ')}">${huecos.join('')}${casillas.join('')}</span>`;
+    }
+
+    // "Última actualización": la última jornada con algún resultado.
+    function actualizarFechaActualizacion(partidos) {
+      const el = document.getElementById('last-update');
+      if (!el) return;
+      let ultima = null, num = -1;
+      (partidos || []).forEach(p => {
+        const jugado = convertirGoles(p['Goles Local']) !== null && convertirGoles(p['Goles Visitante']) !== null;
+        const jornada = obtenerTexto(p['Jornada']);
+        const n = extraerNumero(jornada);
+        if (jugado && n !== null && n > num) { num = n; ultima = jornada; }
+      });
+      el.textContent = ultima ? `Última actualización: resultados hasta la ${ultima}` : 'Última actualización: temporada sin resultados todavía';
     }
 
 
@@ -2196,7 +2289,7 @@ const li =
               li.setAttribute('aria-label', `Ver ficha de ${local} contra ${visitante}`);
               li.innerHTML = `
 
-                <span class="team-home">
+                <span class="team-home${jugado && !aplazado && golesLocal > golesVisitante ? ' winner' : ''}">
                   ${escaparHTML(local)}
                 </span>
 
@@ -2208,7 +2301,7 @@ const li =
                   ${marcador}
                 </span>
 
-                <span class="team-away">
+                <span class="team-away${jugado && !aplazado && golesVisitante > golesLocal ? ' winner' : ''}">
                   ${escaparHTML(visitante)}
                 </span>
 
@@ -2384,7 +2477,7 @@ grid.appendChild(columnaIzquierda);
     bloqueUltima.innerHTML = `
       <button type="button" class="results-toggle" aria-expanded="true">
         <span class="next-round-header">
-          <span class="next-round-title">✅ </span>
+          <span class="next-round-title">✅ Última jornada</span>
           <span class="next-round-description">${escaparHTML(ultimaJornada)}</span>
         </span>
         <span class="results-chevron" aria-hidden="true">⌄</span>
@@ -2733,7 +2826,7 @@ function crearListaPartidos(partidos, mostrarCampo = false) {
 
       <div class="next-match">
 
-        <span class="next-team-home">
+        <span class="next-team-home${jugado && !aplazado && golesLocal > golesVisitante ? ' winner' : ''}">
           ${escaparHTML(local)}
         </span>
 
@@ -2745,7 +2838,7 @@ function crearListaPartidos(partidos, mostrarCampo = false) {
           ${escaparHTML(marcador)}
         </span>
 
-        <span class="next-team-away">
+        <span class="next-team-away${jugado && !aplazado && golesVisitante > golesLocal ? ' winner' : ''}">
           ${escaparHTML(visitante)}
         </span>
 
@@ -2835,7 +2928,8 @@ function renderizarGoleadores() {
     let pos = 0, golesPrevios = null;
     const filas = top.map((j, i) => {
       if (j.goles !== golesPrevios) { pos = i + 1; golesPrevios = j.goles; }
-      return `<tr><td>${pos}</td><td style="text-align:left">Jugador de <strong>${escaparHTML(j.equipo || 'equipo sin especificar')}</strong></td><td><strong>${j.goles}</strong> ${j.goles === 1 ? 'gol' : 'goles'}</td></tr>`;
+      const empatado = top.some((o, k) => k !== i && o.goles === j.goles);
+      return `<tr><td>${empatado ? '= ' : ''}${pos}.º</td><td style="text-align:left">Jugador de <strong>${escaparHTML(j.equipo || 'equipo sin especificar')}</strong></td><td><strong>${j.goles}</strong> ${j.goles === 1 ? 'gol' : 'goles'}</td></tr>`;
     }).join('');
     cont.className = 'table-container';
     cont.innerHTML = `<table class="scorers-table scorers-private"><thead><tr><th>Pos.</th><th style="text-align:left">Jugador</th><th>Goles</th></tr></thead><tbody>${filas}</tbody></table><p class="match-hint">Top ${TOP_GOLEADORES} goleadores de la liga.</p>`;
